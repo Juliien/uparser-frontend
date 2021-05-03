@@ -1,0 +1,20 @@
+<div class="my-5">
+  <h1 class="title text-center">Créer son parser</h1>
+
+  <div class="d-flex justify-content-start mt-5">
+    <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
+      <option *ngFor="let language of languages">{{language}}</option>
+    </select>
+    <select class="form-select" [(ngModel)]="selectedTheme" (change)="updateTheme()">
+      <option *ngFor="let theme of themes">{{theme}}</option>
+    </select>
+  </div>
+  <hr/>
+  <ace-editor #editor></ace-editor>
+  <button type="button" class="btn btn-primary my-3" (click)='getUserParserCode()'>Exécuter <i></i></button>
+
+  <div *ngIf="isExec" class="card">
+    <pre class="p-2">{{editor.value}}</pre>
+  </div>
+
+</div>
