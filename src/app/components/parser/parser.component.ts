@@ -11,6 +11,7 @@ export class ParserComponent implements AfterViewInit {
   themes = ['xcode', 'eclipse', 'twilight', 'dracula'];
   selectedLang = 'typescript';
   selectedTheme = 'xcode';
+  isExec = false;
   exampleCode = `
 function testThis() {
   console.log("it's working!")
@@ -31,7 +32,7 @@ function testThis() {
   }
 
   getUserParserCode(): void {
-   alert(this.editor.value);
+    this.isExec = true;
   }
 
   updateLang(): void {

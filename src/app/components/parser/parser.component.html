@@ -11,5 +11,10 @@
   </div>
   <hr/>
   <ace-editor #editor></ace-editor>
-  <button type="button" class="btn btn-primary mt-3" (click)='getUserParserCode()'>Exécuter <i></i></button>
+  <button type="button" class="btn btn-primary my-3" (click)='getUserParserCode()'>Exécuter <i></i></button>
+
+  <div *ngIf="isExec" class="card">
+    <pre class="p-2">{{editor.value}}</pre>
+  </div>
+
 </div>
