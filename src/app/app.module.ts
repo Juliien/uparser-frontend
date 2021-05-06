@@ -8,11 +8,12 @@ import { AppRoutingModule } from './app-routing.module';
 import { HomeComponent } from './components/home/home.component';
 import { RouterModule } from '@angular/router';
 import { ParserComponent } from './components/parser/parser.component';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AceEditorModule} from 'ng2-ace-editor';
-import { LoginComponent } from './account/login.component';
-import { RegistrationComponent } from './account/register.component';
 import { AlertComponent } from './components/alert/alert/alert.component';
+import { LoginComponent } from './components/authentication/login/login.component';
+import { RegisterComponent } from './components/authentication/register/register.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,16 +22,18 @@ import { AlertComponent } from './components/alert/alert/alert.component';
     HeaderComponent,
     HomeComponent,
     ParserComponent,
+    AlertComponent,
     LoginComponent,
-    RegistrationComponent,
-    AlertComponent
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     RouterModule,
+    HttpClientModule,
     FormsModule,
-    AceEditorModule
+    AceEditorModule,
+    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
