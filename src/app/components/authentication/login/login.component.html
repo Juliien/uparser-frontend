@@ -10,9 +10,10 @@
         <label for="password">Password</label>
         <input type="password" id="password" formControlName="password" class="form-control"/>
       </div>
+      <p class="text-danger  text-center">{{errorMessage}}</p>
       <div class="form-group">
         <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary">
-          Register
+          Connexion
         </button>
       </div>
     </form>

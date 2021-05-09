@@ -9,19 +9,24 @@ import {User} from '../models/user.model';
   providedIn: 'root'
 })
 export class AccountService {
-  private user: Observable<User>;
+  public token: string;
 
   constructor(private router: Router,
-              private http: HttpClient) {}
+              private http: HttpClient) {
+    if(localStorage.getItem('token')) {
+      this.token = localStorage.getItem('token');
+      console.log(this.token);
+    }
+  }
 
-  // login(username, password){
-  //   return this.http.post<User>('${environment.apiUrl}/users/authenticate', {username, password}, options)
-  //     .pipe(map(user => {
-  //       localStorage.setItem('user', JSON.stringify(user));
-  //       this.userSubject.next(user);
-  //       return user;
-  //     }));
-  // }
+  login(data: any): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Origin': '*',
+      })
+    };
+    return this.http.post<any>(environment.apiUrl + 'auth/login',  data, options);
+  }
 
   // logout() {
   //   // remove user from local storage and set current user to null
@@ -37,7 +42,7 @@ export class AccountService {
       })
     };
 
-    return this.http.post(environment.apiUrl + '/auth/register', user, options);
+    return this.http.post(environment.apiUrl + 'auth/register', user, options);
   }
 
   // getAll() {

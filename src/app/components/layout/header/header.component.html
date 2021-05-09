@@ -14,10 +14,14 @@
         </li>
       </ul>
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="!account.token">
           <a class="nav-link" routerLink="/login">Connexion</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
+
+<div *ngIf="account.token">
+  <p>{{account.token}}</p>
+</div>

@@ -18,7 +18,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private accountService: AccountService) { }
+              private authenticationService: AccountService) { }
 
   ngOnInit(): void {
     this.firstNameCtrl = this.formBuilder.control('', Validators.required);
@@ -35,6 +35,10 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): any {
-    return console.log(this.registerForm.value);
+    this.authenticationService.register(this.registerForm.value).subscribe( () => {
+      this.router.navigate(['home']).then();
+    }, (error) => {
+      this.errorMessage = 'Fields can\'t be empty!';
+    });
   }
 }
