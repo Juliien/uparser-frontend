@@ -28,12 +28,10 @@ export class AccountService {
     return this.http.post<any>(environment.apiUrl + 'auth/login',  data, options);
   }
 
-  // logout() {
-  //   // remove user from local storage and set current user to null
-  //   localStorage.removeItem('user');
-  //   this.userSubject.next(null);
-  //   this.router.navigate(['/account/login']);
-  // }
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['home']).then();
+  }
 
   register(user: User): Observable<any>{
     const options = {
