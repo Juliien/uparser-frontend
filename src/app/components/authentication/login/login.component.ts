@@ -36,8 +36,8 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.loginForm.value).subscribe(result => {
       this.authenticationService.token = result.token;
       localStorage.setItem('token', result.token);
-      const decoded = jwt_decode(result.token);
-      console.log(decoded);
+      const decoded: any = jwt_decode(result.token);
+      console.log(decoded.sub);
       this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {
