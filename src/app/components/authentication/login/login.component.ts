@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {AccountService} from '../../../services/account.service';
+import {AuthenticationService} from '../../../services/authentication.service';
+import jwt_decode from 'jwt-decode';
+
 
 @Component({
   selector: 'app-login',
@@ -16,7 +18,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authenticationService: AccountService
+              private authenticationService: AuthenticationService
   ) {
     this.emailCtrl = formBuilder.control('', Validators.required);
     this.passwordCtrl = formBuilder.control('', Validators.required);
@@ -31,11 +33,11 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.authenticationService.login(this.loginForm.value).subscribe(user => {
-      this.authenticationService.email = user.email;
-      this.authenticationService.token = user.token;
-      localStorage.setItem('token', user.token);
-      localStorage.setItem('email', user.email);
+    this.authenticationService.login(this.loginForm.value).subscribe(result => {
+      this.authenticationService.token = result.token;
+      localStorage.setItem('token', result.token);
+      const decoded = jwt_decode(result.token);
+      console.log(decoded);
       this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {
