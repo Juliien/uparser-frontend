@@ -31,8 +31,11 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.authenticationService.login(this.loginForm.value).subscribe(token => {
-      localStorage.setItem('token', token.token);
+    this.authenticationService.login(this.loginForm.value).subscribe(user => {
+      this.authenticationService.email = user.email;
+      this.authenticationService.token = user.token;
+      localStorage.setItem('token', user.token);
+      localStorage.setItem('email', user.email);
       this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {

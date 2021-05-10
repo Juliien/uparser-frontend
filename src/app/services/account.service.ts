@@ -10,12 +10,13 @@ import {User} from '../models/user.model';
 })
 export class AccountService {
   public token: string;
+  public email: string;
 
   constructor(private router: Router,
               private http: HttpClient) {
-    if(localStorage.getItem('token')) {
+    if (localStorage.getItem('token')) {
       this.token = localStorage.getItem('token');
-      console.log(this.token);
+      this.email = localStorage.getItem('email');
     }
   }
 
@@ -29,7 +30,10 @@ export class AccountService {
   }
 
   logout(): void {
+    this.token = null;
+    this.email = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('email');
     this.router.navigate(['home']).then();
   }
 
