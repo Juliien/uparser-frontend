@@ -1,4 +1,4 @@
-<div class="card" *ngIf="!authenticationService.isLogged()">
+<div class="card box-shadow my-5" *ngIf="!authenticationService.isLogged()">
   <h4 class="card-header"> Login </h4>
   <div class="card-body">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">

@@ -41,10 +41,7 @@ export class LoginComponent implements OnInit {
       this.authenticationService.token = result.token;
       localStorage.setItem('token', result.token);
       this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
-      this.userService.getUserByEmail({email: this.authenticationService.decodedToken.sub}).subscribe(user => {
-        this.userService.currentUser = user;
-        this.router.navigate(['home']).then();
-      });
+      this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {
         case 403:

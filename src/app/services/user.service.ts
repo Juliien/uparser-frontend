@@ -12,9 +12,7 @@ export class UserService {
   currentUser: User;
 
   constructor(private router: Router,
-              private http: HttpClient) {
-    console.log(this.currentUser);
-  }
+              private http: HttpClient) {}
 
   getUserByEmail(formData: any): Observable<User> {
     const option = {
