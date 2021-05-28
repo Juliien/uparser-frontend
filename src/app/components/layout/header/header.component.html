@@ -21,7 +21,7 @@
           <button class="btn btn-primary" routerLink="/register">Créer un compte</button>
         </li>
         <li class="nav-item" *ngIf="auth.isLogged()">
-          <a class="nav-link"></a>
+          <a class="nav-link" routerLink="/profile">{{auth.decodedToken.sub}}</a>
         </li>
         <li class="nav-item" *ngIf="auth.isLogged()">
           <a class="nav-link" (click)="logout()">Déconnexion</a>
