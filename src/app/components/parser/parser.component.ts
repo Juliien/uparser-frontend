@@ -8,9 +8,9 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 export class ParserComponent implements AfterViewInit {
   @ViewChild('editor') editor;
   languages = ['typescript', 'python'];
-  themes = ['xcode', 'eclipse', 'twilight', 'dracula'];
+  themes = ['twilight', 'eclipse', 'xcode', 'dracula'];
   selectedLang = 'typescript';
-  selectedTheme = 'xcode';
+  selectedTheme = 'twilight';
   isExec = false;
   exampleCode = `
 function testThis() {

@@ -1,5 +1,6 @@
-ace-editor {
+ace-editor , .card {
   min-height: 500px;
+  min-width: 300px;
   width: 100%;
-  border-radius: 12px ;
+  border-radius: 12px;
 }

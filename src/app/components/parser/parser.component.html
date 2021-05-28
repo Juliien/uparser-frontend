@@ -5,16 +5,24 @@
     <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
       <option *ngFor="let language of languages">{{language}}</option>
     </select>
-    <select class="form-select" [(ngModel)]="selectedTheme" (change)="updateTheme()">
+
+    <select class="form-select me-4" [(ngModel)]="selectedTheme" (change)="updateTheme()">
       <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
+
+    <input class="form-control" type="file" id="formFile">
   </div>
   <hr/>
-  <ace-editor #editor></ace-editor>
+  <div class="d-flex justify-content-start">
+    <ace-editor #editor></ace-editor>
+    <div class="card ms-3">
+      <div class="card-body">
+        <pre>{{editor.value}}</pre>
+      </div>
+    </div>
+  </div>
+
   <button type="button" class="btn btn-primary my-3" (click)='getUserParserCode()'>Exécuter <i></i></button>
 
-  <div *ngIf="isExec" class="card">
-    <pre class="p-2">{{editor.value}}</pre>
-  </div>
 
 </div>
