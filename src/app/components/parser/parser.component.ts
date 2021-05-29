@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import * as fileSaver from 'file-saver';
 
 @Component({
   selector: 'app-parser',
@@ -12,6 +13,7 @@ export class ParserComponent implements AfterViewInit {
   selectedLang = 'typescript';
   selectedTheme = 'twilight';
   isExec = false;
+  extensionType: string;
   exampleCode = `
 function testThis() {
   console.log("it's working!")
@@ -33,6 +35,12 @@ function testThis() {
 
   getUserParserCode(): void {
     this.isExec = true;
+    if (this.extensionType) {
+      this.downloadFile();
+    }
+    else {
+      alert('l\'extention est vide');
+    }
   }
 
   updateLang(): void {
@@ -41,5 +49,14 @@ function testThis() {
 
   updateTheme(): void {
     this.editor.setTheme(this.selectedTheme);
+  }
+
+  downloadFile(): void {
+    const file: any = {
+      name: 'julien',
+      age: 23
+    };
+    const newFile = new File([JSON.stringify(file)],  'example.' + this.extensionType, {type: 'text/json;charset=utf-8'});
+    fileSaver.saveAs(newFile);
   }
 }

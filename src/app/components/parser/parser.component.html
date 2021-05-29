@@ -10,7 +10,8 @@
       <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
 
-    <input class="form-control" type="file" id="formFile">
+    <input class="form-control me-4" type="file">
+    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Type d'extension">
   </div>
   <hr/>
   <div class="d-flex justify-content-start">
@@ -22,7 +23,5 @@
     </div>
   </div>
 
-  <button type="button" class="btn btn-primary my-3" (click)='getUserParserCode()'>Exécuter <i></i></button>
-
-
+  <button type="button" class="btn btn-primary my-3" (click)='getUserParserCode()'>Convertir</button>
 </div>
