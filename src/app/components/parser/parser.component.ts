@@ -9,7 +9,7 @@ import * as fileSaver from 'file-saver';
 export class ParserComponent implements AfterViewInit {
   @ViewChild('editor') editor;
   languages = ['typescript', 'python'];
-  themes = ['twilight', 'eclipse', 'xcode', 'dracula'];
+  themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'typescript';
   selectedTheme = 'twilight';
   isExec = false;
@@ -34,8 +34,8 @@ function testThis() {
   }
 
   getUserParserCode(): void {
-    this.isExec = true;
     if (this.extensionType) {
+      this.isExec = true;
       this.downloadFile();
     }
     else {

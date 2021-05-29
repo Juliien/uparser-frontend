@@ -18,7 +18,7 @@
     <ace-editor #editor></ace-editor>
     <div class="card ms-3">
       <div class="card-body">
-        <pre>{{editor.value}}</pre>
+        <pre *ngIf="isExec">sdt out : exit 0</pre>
       </div>
     </div>
   </div>
