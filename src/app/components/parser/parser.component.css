@@ -4,3 +4,8 @@ ace-editor , .card {
   width: 100%;
   border-radius: 12px;
 }
+
+.spinner {
+  display: flex;
+  align-items: center;
+}

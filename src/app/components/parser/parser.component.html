@@ -5,13 +5,13 @@
     <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
       <option *ngFor="let language of languages">{{language}}</option>
     </select>
-
     <select class="form-select me-4" [(ngModel)]="selectedTheme" (change)="updateTheme()">
       <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
-
     <input class="form-control me-4" type="file">
-    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Type d'extension">
+    <input class="form-control me-2" type="text" placeholder="Extension en entrer">
+    <span><i class="fas fa-arrow-right me-2 mt-2"></i></span>
+    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
   </div>
   <hr/>
   <div class="d-flex justify-content-start">
@@ -19,6 +19,13 @@
     <div class="card ms-3">
       <div class="card-body">
         <pre *ngIf="isExec">sdt out : exit 0</pre>
+<!--        Spinner -->
+        <div class="text-center mt-5">
+          <div class="spinner-border text-primary" role="status" style="">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
       </div>
     </div>
   </div>

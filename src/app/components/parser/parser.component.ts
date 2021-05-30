@@ -37,6 +37,7 @@ function testThis() {
     if (this.extensionType) {
       this.isExec = true;
       this.downloadFile();
+      this.isExec = false;
     }
     else {
       alert('l\'extention est vide');
