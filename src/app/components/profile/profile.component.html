@@ -1,0 +1,30 @@
+<div class="row d-flex justify-content-center my-5" *ngIf="userService.currentUser">
+  <h2 class="title text-center mb-4">Profil</h2>
+  <div class="col-xl-6 col-md-12">
+    <div class="card box-shadow">
+      <div class="row m-l-0 m-r-0">
+        <div class="col-4 bg-colors">
+          <div class="card-body text-center">
+            <img src="https://img.icons8.com/bubbles/100/000000/user.png" alt="profile picture">
+            <h6 class="card-title text-white">{{userService.currentUser.firstName}} {{userService.currentUser.lastName}}</h6>
+          </div>
+        </div>
+        <!-- information -->
+        <div class="col-8">
+          <div class="card-body">
+            <h6 class="border-default">Informations</h6>
+              <div class="my-3">
+                <h6>Membre depuis</h6>
+                <h6 class="text-muted">{{userService.currentUser.createDate}}</h6>
+              </div>
+              <div clas="mt-3">
+                <h6>Email</h6>
+                <h6 class="text-muted">{{userService.currentUser.email}}</h6>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

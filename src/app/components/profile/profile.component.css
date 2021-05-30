@@ -1,0 +1,14 @@
+.card {
+  border-radius: 10px;
+  border: none;
+}
+
+.bg-colors {
+  background: -webkit-gradient(linear, left top, right top, from(#f29263), to(#ee5a6f));
+  background: linear-gradient(to right, #ee5a6f, #f29263);
+  border-radius: 10px 0 0 10px;
+}
+
+.border-default {
+  border-bottom: 1px solid #e0e0e0;
+}

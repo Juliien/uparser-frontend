@@ -18,20 +18,25 @@ export class RegisterComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authenticationService: AuthenticationService) { }
+              public authenticationService: AuthenticationService) { }
 
   ngOnInit(): void {
-    this.firstNameCtrl = this.formBuilder.control('', Validators.required);
-    this.lastNameCtrl = this.formBuilder.control('', Validators.required);
-    this.emailCtrl = this.formBuilder.control('', Validators.required);
-    this.passwordCtrl = this.formBuilder.control('', [Validators.required, Validators.minLength(6)]);
+    if (this.authenticationService.isLogged() === true) {
+      this.router.navigate(['home']).then();
+    }
+     else {
+      this.firstNameCtrl = this.formBuilder.control('', Validators.required);
+      this.lastNameCtrl = this.formBuilder.control('', Validators.required);
+      this.emailCtrl = this.formBuilder.control('', Validators.required);
+      this.passwordCtrl = this.formBuilder.control('', [Validators.required, Validators.minLength(6)]);
 
-    this.registerForm = this.formBuilder.group({
-      firstName: this.firstNameCtrl,
-      lastName: this.lastNameCtrl,
-      email: this.emailCtrl,
-      password: this.passwordCtrl
-    });
+      this.registerForm = this.formBuilder.group({
+        firstName: this.firstNameCtrl,
+        lastName: this.lastNameCtrl,
+        email: this.emailCtrl,
+        password: this.passwordCtrl
+      });
+    }
   }
 
   onSubmit(): any {
