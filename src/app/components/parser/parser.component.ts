@@ -16,9 +16,10 @@ export class ParserComponent implements AfterViewInit, OnInit {
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'typescript';
   selectedTheme = 'twilight';
-  isExec = false;
+  spinner = false;
   extensionType: string;
-  file: any;
+  fileName: string;
+  fileContent: any;
   exampleCode = `
 function testThis() {
   console.log("it's working!")
@@ -47,29 +48,26 @@ function testThis() {
   }
 
   convertFile(): void {
-    // const formData = new FormData();
-    // formData.append('file', this.file.data);
-    // console.log(formData);
-    if (this.extensionType) {
+    this.spinner = true;
+    if (this.extensionType && this.fileContent && this.fileName) {
       const data: KafkaModel = {
-        runId: '111',
+        runId: '2',
         userId: this.userService.currentUser.id,
-        fileName: 'a file',
-        fileContent: 'the file to parse',
-        code: this.editor.value,
+        fileName: this.fileName,
+        fileContent: btoa(this.fileContent),
+        code: btoa(this.editor.value),
         extensionEnd: this.extensionType,
         language: this.selectedLang
       };
-
-      this.isExec = true;
       this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
-        console.log(jsonData);
-        this.downloadFile();
+        // TODO Get stdout + dl converted file
       });
-      this.isExec = false;
+      this.downloadFile();
+      this.spinner = false;
     }
     else {
       alert('l\'extention est vide');
+      this.spinner = false;
     }
   }
 
@@ -86,7 +84,18 @@ function testThis() {
       name: 'julien',
       age: 23
     };
-    const newFile = new File([JSON.stringify(file)],  'example.' + this.extensionType, {type: 'text/json;charset=utf-8'});
+    const newFileName = this.fileName.split('.').slice(0, -1).join('.');
+    const newFile = new File([JSON.stringify(file)], newFileName + '.' + this.extensionType, {type: 'text/' +
+        this.extensionType + ';charset=utf-8'});
     fileSaver.saveAs(newFile);
+  }
+
+  getUploadFile(e): void {
+    this.fileName = e.target.files[0].name;
+    const fileReader = new FileReader();
+    fileReader.onloadend = (() => {
+      this.fileContent = fileReader.result;
+    });
+    fileReader.readAsText(e.target.files[0]);
   }
 }
