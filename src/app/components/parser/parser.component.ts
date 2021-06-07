@@ -51,7 +51,7 @@ function testThis() {
     this.spinner = true;
     if (this.extensionType && this.fileContent && this.fileName) {
       const data: KafkaModel = {
-        runId: '2',
+        runId: null,
         userId: this.userService.currentUser.id,
         fileName: this.fileName,
         fileContent: btoa(this.fileContent),
