@@ -1,23 +1,39 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import * as fileSaver from 'file-saver';
+import {CodeEditorService} from '../../services/code-editor.service';
+import {UserService} from '../../services/user.service';
+import {AuthenticationService} from '../../services/authentication.service';
+import {KafkaModel} from '../../models/kafka.model';
 
 @Component({
   selector: 'app-parser',
   templateUrl: './parser.component.html',
   styleUrls: ['./parser.component.css']
 })
-export class ParserComponent implements AfterViewInit {
+export class ParserComponent implements AfterViewInit, OnInit {
   @ViewChild('editor') editor;
   languages = ['typescript', 'python'];
-  themes = ['xcode', 'eclipse', 'twilight', 'dracula'];
+  themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'typescript';
-  selectedTheme = 'xcode';
-  isExec = false;
+  selectedTheme = 'twilight';
+  spinner = false;
+  extensionType: string;
+  fileName: string;
+  fileContent: any;
   exampleCode = `
 function testThis() {
   console.log("it's working!")
 }`;
 
-  constructor() {
+  constructor(private codeEditorService: CodeEditorService,
+              private userService: UserService,
+              private authService: AuthenticationService) {
+  }
+
+  ngOnInit(): void {
+    if (!this.userService.currentUser) {
+      this.userService.getUserByEmail({email: this.authService.decodedToken.sub}).subscribe(user => this.userService.currentUser = user);
+    }
   }
 
   ngAfterViewInit(): void {
@@ -31,8 +47,28 @@ function testThis() {
     this.editor.value = this.exampleCode;
   }
 
-  getUserParserCode(): void {
-    this.isExec = true;
+  convertFile(): void {
+    this.spinner = true;
+    if (this.extensionType && this.fileContent && this.fileName) {
+      const data: KafkaModel = {
+        runId: null,
+        userId: this.userService.currentUser.id,
+        fileName: this.fileName,
+        fileContent: btoa(this.fileContent),
+        code: btoa(this.editor.value),
+        extensionEnd: this.extensionType,
+        language: this.selectedLang
+      };
+      this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
+        // TODO Get stdout + dl converted file
+      });
+      this.downloadFile();
+      this.spinner = false;
+    }
+    else {
+      alert('l\'extention est vide');
+      this.spinner = false;
+    }
   }
 
   updateLang(): void {
@@ -41,5 +77,25 @@ function testThis() {
 
   updateTheme(): void {
     this.editor.setTheme(this.selectedTheme);
+  }
+
+  downloadFile(): void {
+    const file: any = {
+      name: 'julien',
+      age: 23
+    };
+    const newFileName = this.fileName.split('.').slice(0, -1).join('.');
+    const newFile = new File([JSON.stringify(file)], newFileName + '.' + this.extensionType, {type: 'text/' +
+        this.extensionType + ';charset=utf-8'});
+    fileSaver.saveAs(newFile);
+  }
+
+  getUploadFile(e): void {
+    this.fileName = e.target.files[0].name;
+    const fileReader = new FileReader();
+    fileReader.onloadend = (() => {
+      this.fileContent = fileReader.result;
+    });
+    fileReader.readAsText(e.target.files[0]);
   }
 }
