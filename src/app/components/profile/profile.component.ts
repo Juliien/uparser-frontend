@@ -14,7 +14,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.userService.currentUser) {
-      this.userService.getUserByEmail({email: this.authService.decodedToken.sub}).subscribe(user => this.userService.currentUser = user);
+      this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => this.userService.currentUser = user);
     }
   }
 }

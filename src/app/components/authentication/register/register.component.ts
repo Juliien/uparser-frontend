@@ -41,8 +41,17 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): any {
     this.authenticationService.register(this.registerForm.value).subscribe( () => {
-      this.router.navigate(['home']).then();
-    }, (error) => {
+      const formData = {
+        email: this.registerForm.value.email,
+        password: this.registerForm.value.password
+      };
+      this.authenticationService.login(formData).subscribe(result => {
+        this.authenticationService.token = result.token;
+        localStorage.setItem('token', result.token);
+        this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
+        this.router.navigate(['home']).then();
+      });
+      }, () => {
       this.errorMessage = 'Fields can\'t be empty!';
     });
   }

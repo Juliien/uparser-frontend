@@ -32,7 +32,7 @@ function testThis() {
 
   ngOnInit(): void {
     if (!this.userService.currentUser) {
-      this.userService.getUserByEmail({email: this.authService.decodedToken.sub}).subscribe(user => this.userService.currentUser = user);
+      this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => this.userService.currentUser = user);
     }
   }
 
@@ -66,7 +66,7 @@ function testThis() {
       this.spinner = false;
     }
     else {
-      alert('l\'extention est vide');
+      alert('Les champs ne peuvent pas être vides');
       this.spinner = false;
     }
   }
