@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   emailCtrl: FormControl;
   passwordCtrl: FormControl;
   errorMessage: string;
+  isChangePasswordEnable: boolean;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -45,10 +46,10 @@ export class LoginComponent implements OnInit {
     }, (error) => {
       switch (error.status) {
         case 403:
-          this.errorMessage = 'Email ou mot de passe incorrect !';
+          this.errorMessage = 'E-mail ou mot de passe incorrect !';
           break;
         case 400:
-          this.errorMessage = 'Fields can\'t be empty!';
+          this.errorMessage = 'Fields can\'t be empty !';
       }
     });
   }

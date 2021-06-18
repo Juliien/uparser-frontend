@@ -1,22 +1,62 @@
-<div class="card box-shadow my-5" *ngIf="!authenticationService.isLogged()">
-  <h4 class="card-header"> Login </h4>
+<div class="card" *ngIf="!isChangePasswordEnable">
   <div class="card-body">
+    <h4 class="card-title text-center title">Se connecter a Uparser</h4>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="text" id="email" formControlName="email" class="form-control"/>
+      <div class="form-group mb-3">
+        <input type="email" formControlName="email" class="form-control" placeholder="E-mail"/>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" formControlName="password" class="form-control"/>
+
+      <div class="form-group mb-3">
+        <input type="password" formControlName="password" class="form-control" placeholder="Mot de passe"/>
+        <a class="form-text d-flex justify-content-end" (click)="isChangePasswordEnable = true">Mot de passe oublié ?</a>
       </div>
-      <p class="text-danger  text-center">{{errorMessage}}</p>
-      <div class="form-group">
+
+      <p class="text-danger text-center">{{errorMessage}}</p>
+      <div class=" form-group d-grid">
         <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary">
           Connexion
         </button>
       </div>
     </form>
-    <a routerLink="/register">se créer un compte</a>
+    <div class="login-or">
+      <hr class="hr-or">
+      <span class="span-or">ou</span>
+    </div>
+    <div class="d-grid">
+      <button type="button" class="btn btn-outline-primary" routerLink="/register">
+        Je m'inscris !
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card" *ngIf="isChangePasswordEnable">
+  <div class="card-header">
+    Mot de passe oublié ?
+    <i class="fas fa-times fa-pull-right" (click)="isChangePasswordEnable = false"></i>
+  </div>
+  <div class="card-body">
+    <p>Indiquez l'adresse e-mail que vous avez utilisée pour vous inscrire et nous vous enverrons un code.</p>
+    <div class="form-group mb-3">
+      <input type="email" formControlName="email" class="form-control" placeholder="E-mail"/>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary">
+        Continuer
+      </button>
+    </div>
+
+    <div class="form-group mb-3">
+      <input type="password" formControlName="" class="form-control" placeholder="Entrez le code"/>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-primary">
+        Valider
+      </button>
+    </div>
+
+    <div class="form-group mb-3">
+      <input type="password" formControlName="" class="form-control" placeholder="Nouveau mot de passe"/>
+    </div>
   </div>
 </div>

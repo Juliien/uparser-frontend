@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Play:wght@700&display=swap');
 
+html, body {
+  background-color: #F7F7F6 !important;
+
+}
 .title {
   font-family: 'Play', sans-serif !important;
 }
