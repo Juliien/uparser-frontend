@@ -1,9 +1,10 @@
-<!-- Info Alert -->
+<!-- Info alert -->
 <div class="alert alert-primary alert-dismissible fade show" role="alert" *ngIf="displayAlert">
   <strong><i class="fas fa-info-circle fa-lg"></i> Le mot de passe à été mis à jour !</strong>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
+<!-- Login form -->
 <div class="card" *ngIf="!isChangePasswordEnable">
   <div class="card-body">
     <h4 class="card-title text-center title">Se connecter a Uparser</h4>
@@ -36,6 +37,7 @@
   </div>
 </div>
 
+<!-- Change password form -->
 <div class="card" *ngIf="isChangePasswordEnable">
   <div class="card-header">
     Mot de passe oublié ?
@@ -54,7 +56,7 @@
       </div>
     </div>
     <div *ngIf="isEmailSend">
-      <p>Indiquez le code de verification que vous avez reçu a l'addresse e-mail {{currentEmail}}</p>
+      <p>Indiquez le code de verification que vous avez reçu a l'addresse e-mail <strong>{{currentEmail}}</strong>.</p>
       <div class="form-group mb-3" >
         <input type="password" [(ngModel)]="verificationCode" class="form-control" placeholder="Entrez le code"
                (focus)="errorMessage = ''; verificationCode =''"/>
@@ -68,6 +70,7 @@
     </div>
 
     <div class="form-group" *ngIf="isCodeVerified">
+      <p>Entrez le nouveau mot de passe puis enregistrer.</p>
       <input type="password" class="form-control" [(ngModel)]="newPassword" placeholder="Nouveau mot de passe"/>
       <div class="d-grid">
         <button type="button" class="btn btn-primary fa-pull-right my-3" (click)="changePassword()"
