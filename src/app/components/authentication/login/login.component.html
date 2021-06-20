@@ -1,16 +1,22 @@
+<!-- Info Alert -->
+<div class="alert alert-primary alert-dismissible fade show" role="alert" *ngIf="displayAlert">
+  <strong><i class="fas fa-info-circle fa-lg"></i> Le mot de passe à été mis à jour !</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
 <div class="card" *ngIf="!isChangePasswordEnable">
   <div class="card-body">
     <h4 class="card-title text-center title">Se connecter a Uparser</h4>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group mb-3">
-        <input type="email" formControlName="email" class="form-control" placeholder="E-mail"/>
+        <input type="email" formControlName="email" class="form-control" placeholder="E-mail"
+               (focus)="errorMessage = ''"/>
       </div>
-
       <div class="form-group mb-3">
-        <input type="password" formControlName="password" class="form-control" placeholder="Mot de passe"/>
+        <input type="password" formControlName="password" class="form-control" placeholder="Mot de passe"
+               (focus)="errorMessage = ''"/>
         <a class="form-text d-flex justify-content-end" (click)="isChangePasswordEnable = true">Mot de passe oublié ?</a>
       </div>
-
       <p class="text-danger text-center">{{errorMessage}}</p>
       <div class=" form-group d-grid">
         <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary">
@@ -36,27 +42,39 @@
     <i class="fas fa-times fa-pull-right" (click)="isChangePasswordEnable = false"></i>
   </div>
   <div class="card-body">
-    <p>Indiquez l'adresse e-mail que vous avez utilisée pour vous inscrire et nous vous enverrons un code.</p>
-    <div class="form-group mb-3">
-      <input type="email" formControlName="email" class="form-control" placeholder="E-mail"/>
+    <div *ngIf="!isEmailSend && !isCodeVerified">
+      <p>Indiquez l'adresse e-mail que vous avez utilisée pour vous inscrire et nous vous enverrons un code.</p>
+      <div class="form-group mb-3">
+        <input type="email" [(ngModel)]="currentEmail" class="form-control" placeholder="E-mail"/>
+      </div>
+      <div class="d-grid">
+        <button type="button" class="btn btn-primary" (click)="sendEmail()">
+          Continuer
+        </button>
+      </div>
     </div>
-    <div class="d-grid">
-      <button type="submit" class="btn btn-primary">
-        Continuer
-      </button>
+    <div *ngIf="isEmailSend">
+      <p>Indiquez le code de verification que vous avez reçu a l'addresse e-mail {{currentEmail}}</p>
+      <div class="form-group mb-3" >
+        <input type="password" [(ngModel)]="verificationCode" class="form-control" placeholder="Entrez le code"
+               (focus)="errorMessage = ''; verificationCode =''"/>
+      </div>
+      <p class="text-danger text-center">{{errorMessage}}</p>
+      <div class="d-grid">
+        <button type="button" class="btn btn-primary" (click)="verifyUser()">
+          Verfier
+        </button>
+      </div>
     </div>
 
-    <div class="form-group mb-3">
-      <input type="password" formControlName="" class="form-control" placeholder="Entrez le code"/>
-    </div>
-    <div class="d-grid">
-      <button type="submit" class="btn btn-primary">
-        Valider
-      </button>
-    </div>
-
-    <div class="form-group mb-3">
-      <input type="password" formControlName="" class="form-control" placeholder="Nouveau mot de passe"/>
+    <div class="form-group" *ngIf="isCodeVerified">
+      <input type="password" class="form-control" [(ngModel)]="newPassword" placeholder="Nouveau mot de passe"/>
+      <div class="d-grid">
+        <button type="button" class="btn btn-primary fa-pull-right my-3" (click)="changePassword()"
+                [disabled]="!newPassword">
+          Enregistrer
+        </button>
+      </div>
     </div>
   </div>
 </div>

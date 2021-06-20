@@ -15,11 +15,17 @@ export class LoginComponent implements OnInit {
   emailCtrl: FormControl;
   passwordCtrl: FormControl;
   errorMessage: string;
+  newPassword: string;
+  currentEmail: string;
+  verificationCode: string;
   isChangePasswordEnable: boolean;
+  isEmailSend: boolean;
+  isCodeVerified: boolean;
+  displayAlert: boolean;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              public authenticationService: AuthenticationService,
+              private authenticationService: AuthenticationService,
               private userService: UserService
   ) {
     this.emailCtrl = formBuilder.control('', Validators.required);
@@ -39,8 +45,8 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.authenticationService.login(this.loginForm.value).subscribe(result => {
-      this.authenticationService.token = result.token;
       localStorage.setItem('token', result.token);
+      this.authenticationService.token = result.token;
       this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
       this.router.navigate(['home']).then();
     }, (error) => {
@@ -50,7 +56,43 @@ export class LoginComponent implements OnInit {
           break;
         case 400:
           this.errorMessage = 'Fields can\'t be empty !';
+          break;
       }
+    });
+  }
+
+  sendEmail(): void {
+    console.log(this.currentEmail);
+    // service qui envoie un email
+    this.isEmailSend = true;
+  }
+
+  verifyUser(): void {
+    const formData = {
+      email: this.currentEmail,
+      password: this.verificationCode
+    };
+
+    this.authenticationService.login(formData).subscribe(result => {
+      this.authenticationService.token = result.token;
+      this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
+
+      this.userService.getUserByEmail(this.authenticationService.decodedToken.email).subscribe(user => {
+        this.userService.currentUser = user;
+        this.isCodeVerified = true;
+        this.isEmailSend = false;
+      });
+    }, () => {
+      this.errorMessage = 'Le code de verification est incorrect !';
+    });
+  }
+
+  changePassword(): void {
+    this.userService.currentUser.password = this.newPassword;
+    this.userService.changeUserPassword(this.userService.currentUser).subscribe(user => {
+      this.userService.currentUser = user;
+      this.isChangePasswordEnable = false;
+      this.displayAlert = true;
     });
   }
 }
