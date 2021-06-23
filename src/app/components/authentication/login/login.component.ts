@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../../services/authentication.service';
 import {UserService} from '../../../services/user.service';
+import {EmailModel} from '../../../models/email.model';
 
 
 @Component({
@@ -62,8 +63,13 @@ export class LoginComponent implements OnInit {
   }
 
   sendEmail(): void {
-    console.log(this.currentEmail);
-    // service qui envoie un email
+    const mailData: EmailModel = {
+      mailFrom: 'uparser.support@gmail.com',
+      mailTo: this.currentEmail,
+      mailSubject: 'Uparser - Mot de passe perdu',
+      mailContent: ''
+    };
+    this.userService.sendUserMail(mailData).subscribe();
     this.isEmailSend = true;
   }
 

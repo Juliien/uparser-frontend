@@ -5,6 +5,7 @@ import {Router} from '@angular/router';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserModel} from '../models/user.model';
 import {AuthenticationService} from './authentication.service';
+import {EmailModel} from '../models/email.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,5 +34,9 @@ export class UserService {
       }),
     };
     return this.http.put<UserModel>(environment.apiUrl + 'user/password', userData,  option);
+  }
+
+  sendUserMail(mailData: EmailModel): Observable<EmailModel> {
+    return this.http.post<EmailModel>(environment.apiUrl + 'email', mailData);
   }
 }
