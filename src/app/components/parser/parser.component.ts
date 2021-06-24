@@ -12,7 +12,7 @@ import {KafkaModel} from '../../models/kafka.model';
 })
 export class ParserComponent implements AfterViewInit, OnInit {
   @ViewChild('editor') editor;
-  languages = ['typescript', 'python'];
+  languages = ['typescript', 'python', 'C'];
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'typescript';
   selectedTheme = 'twilight';
@@ -72,7 +72,11 @@ function testThis() {
   }
 
   updateLang(): void {
-    this.editor.mode = this.selectedLang;
+    if (this.selectedLang === 'C' ) {
+      this.editor.mode = 'c_cpp';
+    } else {
+      this.editor.mode = this.selectedLang;
+    }
   }
 
   updateTheme(): void {
