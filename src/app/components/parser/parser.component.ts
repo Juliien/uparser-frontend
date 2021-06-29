@@ -59,10 +59,18 @@ function testThis() {
         extensionEnd: this.extensionType,
         language: this.selectedLang
       };
-      this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
-        // TODO Get stdout + dl converted file
-      });
-      this.downloadFile();
+
+      const checkCode = {
+        userId: this.userService.currentUser.id,
+        codeEncoded: btoa(this.editor.value)
+      };
+      // test if user code is not a copied
+      this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
+
+      // this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
+      //   // TODO Get stdout + dl converted file
+      // });
+      // this.downloadFile();
       this.spinner = false;
     }
     else {
