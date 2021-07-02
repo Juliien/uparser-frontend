@@ -4,6 +4,7 @@ import {CodeEditorService} from '../../services/code-editor.service';
 import {UserService} from '../../services/user.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {KafkaModel} from '../../models/kafka.model';
+import {CodeHistoryModel} from '../../models/code-history.model';
 
 @Component({
   selector: 'app-parser',
@@ -16,10 +17,12 @@ export class ParserComponent implements AfterViewInit, OnInit {
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'typescript';
   selectedTheme = 'twilight';
-  spinner = false;
+  selectedCode: CodeHistoryModel;
+  codeHistory: CodeHistoryModel[];
   extensionType: string;
   fileName: string;
   fileContent: any;
+  spinner = false;
   exampleCode = `
 function testThis() {
   console.log("it's working!")
@@ -32,7 +35,12 @@ function testThis() {
 
   ngOnInit(): void {
     if (!this.userService.currentUser) {
-      this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => this.userService.currentUser = user);
+      this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => {
+        this.userService.currentUser = user;
+        this.getUserCodeHistory();
+      });
+    } else {
+      this.getUserCodeHistory();
     }
   }
 
@@ -87,6 +95,12 @@ function testThis() {
     }
   }
 
+  updateCode(): void {
+    if (this.selectedCode != null) {
+      this.editor.value = atob(this.selectedCode.codeEncoded);
+    }
+  }
+
   updateTheme(): void {
     this.editor.setTheme(this.selectedTheme);
   }
@@ -109,5 +123,9 @@ function testThis() {
       this.fileContent = fileReader.result;
     });
     fileReader.readAsText(e.target.files[0]);
+  }
+
+  getUserCodeHistory(): void {
+    this.codeEditorService.getUserCodeHistory().subscribe(history => this.codeHistory = history);
   }
 }

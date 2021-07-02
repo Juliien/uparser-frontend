@@ -12,6 +12,10 @@
     <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
   </div>
   <hr/>
+  <select class="form-select mt-4 mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
+    <option [ngValue]="null" selected>Historique</option>
+    <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
+  </select>
   <div class="d-flex justify-content-start">
     <ace-editor #editor></ace-editor>
     <div class="card ms-3">
