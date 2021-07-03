@@ -1,0 +1,18 @@
+.banner {
+  background-image: url("../../../assets/images/home_bg.png");
+  height: 70vh;
+}
+
+.brand {
+  max-width: 800px;
+}
+
+.card {
+  background: transparent!important;
+  border: none!important;
+}
+
+img {
+  width: 200px;
+  height: 200px;
+}
