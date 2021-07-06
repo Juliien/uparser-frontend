@@ -1,10 +1,12 @@
 <h2 class="text-center title my-5">Catalogue</h2>
-<div class="card-group">
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-      <p class="card-text"><small class="text-muted">poster le 12-02-22</small></p>
+<div *ngFor="let parser of catalog" class="container">
+  <div class="card-group">
+    <div class="card my-2">
+      <div class="card-body">
+        <h5 class="card-title">{{parser.extensionStart}} vers {{parser.extensionEnd}}</h5>
+        <p class="card-text">language : {{parser.language}}</p>
+        <p class="card-text"><small class="text-muted">créer le : {{parser.date}}</small></p>
+      </div>
     </div>
   </div>
 </div>

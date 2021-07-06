@@ -1,9 +1,8 @@
 export class KafkaModel {
-  runId: string;
-  userId: string;
-  fileName: string;
-  fileContent: string;
-  code: string;
-  extensionEnd: string;
+  id: string;
+  inputfile: string;
+  from: string;
+  to: string;
+  algorithm: string;
   language: string;
 }
