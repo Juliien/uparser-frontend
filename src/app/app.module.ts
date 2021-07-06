@@ -14,6 +14,7 @@ import {LoginComponent} from './components/authentication/login/login.component'
 import {RegisterComponent} from './components/authentication/register/register.component';
 import {HttpClientModule} from '@angular/common/http';
 import { ProfileComponent } from './components/profile/profile.component';
+import { CatalogueComponent } from './components/catalogue/catalogue.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ProfileComponent } from './components/profile/profile.component';
     ParserComponent,
     LoginComponent,
     RegisterComponent,
-    ProfileComponent
+    ProfileComponent,
+    CatalogueComponent
   ],
   imports: [
     BrowserModule,

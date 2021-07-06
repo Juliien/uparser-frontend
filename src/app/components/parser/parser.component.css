@@ -9,3 +9,7 @@ ace-editor , .card {
   display: flex;
   align-items: center;
 }
+
+.history {
+  max-width: 250px;
+}
