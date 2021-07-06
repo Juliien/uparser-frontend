@@ -4,6 +4,8 @@ import {CodeEditorService} from '../../services/code-editor.service';
 import {UserService} from '../../services/user.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {KafkaModel} from '../../models/kafka.model';
+import {CodeModel} from '../../models/code.model';
+import {RunnerOutputModel} from '../../models/runner-output.model';
 
 @Component({
   selector: 'app-parser',
@@ -12,18 +14,23 @@ import {KafkaModel} from '../../models/kafka.model';
 })
 export class ParserComponent implements AfterViewInit, OnInit {
   @ViewChild('editor') editor;
-  languages = ['typescript', 'python'];
+  languages = ['python', 'typescript', 'C'];
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
-  selectedLang = 'typescript';
+  selectedLang = 'python';
   selectedTheme = 'twilight';
-  spinner = false;
+  selectedCode: CodeModel;
+  codeHistory: CodeModel[];
+  runnerOutput: RunnerOutputModel;
   extensionType: string;
+  errorMessage: string;
   fileName: string;
   fileContent: any;
-  exampleCode = `
-function testThis() {
-  console.log("it's working!")
-}`;
+  spinner = false;
+  exampleCode = `import sys
+
+with open(argv[1]) as file:
+  print(file.read())
+ `;
 
   constructor(private codeEditorService: CodeEditorService,
               private userService: UserService,
@@ -32,7 +39,12 @@ function testThis() {
 
   ngOnInit(): void {
     if (!this.userService.currentUser) {
-      this.userService.getUserByEmail({email: this.authService.decodedToken.sub}).subscribe(user => this.userService.currentUser = user);
+      this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => {
+        this.userService.currentUser = user;
+        this.getUserCodeHistory();
+      });
+    } else {
+      this.getUserCodeHistory();
     }
   }
 
@@ -49,30 +61,60 @@ function testThis() {
 
   convertFile(): void {
     this.spinner = true;
+    this.runnerOutput = null;
+
     if (this.extensionType && this.fileContent && this.fileName) {
+      const fileExtension = this.fileName.split('.').pop();
       const data: KafkaModel = {
-        runId: null,
-        userId: this.userService.currentUser.id,
-        fileName: this.fileName,
-        fileContent: btoa(this.fileContent),
-        code: btoa(this.editor.value),
-        extensionEnd: this.extensionType,
+        id: '1',
+        inputfile: btoa(this.fileContent),
+        algorithm: btoa(this.editor.value),
+        from: fileExtension,
+        to: this.extensionType,
         language: this.selectedLang
       };
+
+      const checkCode = {
+        userId: this.userService.currentUser.id,
+        extensionStart: fileExtension,
+        extensionEnd: this.extensionType,
+        language: this.selectedLang,
+        codeEncoded: btoa(this.editor.value),
+        date: null
+      };
+
+      // test if user code is not a copied
+      this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
+
       this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
-        // TODO Get stdout + dl converted file
+        this.runnerOutput = jsonData;
+        this.spinner = false;
+        // this.downloadFile();
+      }, (error) => {
+        if (error.status === 500) {
+          this.errorMessage = 'Timeout !';
+          this.spinner = false;
+        }
       });
-      this.downloadFile();
-      this.spinner = false;
     }
     else {
-      alert('l\'extention est vide');
+      this.errorMessage = 'Les champs ne peuvent pas être vides'
       this.spinner = false;
     }
   }
 
   updateLang(): void {
-    this.editor.mode = this.selectedLang;
+    if (this.selectedLang === 'C' ) {
+      this.editor.mode = 'c_cpp';
+    } else {
+      this.editor.mode = this.selectedLang;
+    }
+  }
+
+  updateCode(): void {
+    if (this.selectedCode != null) {
+      this.editor.value = atob(this.selectedCode.codeEncoded);
+    }
   }
 
   updateTheme(): void {
@@ -80,12 +122,8 @@ function testThis() {
   }
 
   downloadFile(): void {
-    const file: any = {
-      name: 'julien',
-      age: 23
-    };
     const newFileName = this.fileName.split('.').slice(0, -1).join('.');
-    const newFile = new File([JSON.stringify(file)], newFileName + '.' + this.extensionType, {type: 'text/' +
+    const newFile = new File([this.runnerOutput.stdout], newFileName + '.' + this.extensionType, {type: 'text/' +
         this.extensionType + ';charset=utf-8'});
     fileSaver.saveAs(newFile);
   }
@@ -97,5 +135,9 @@ function testThis() {
       this.fileContent = fileReader.result;
     });
     fileReader.readAsText(e.target.files[0]);
+  }
+
+  getUserCodeHistory(): void {
+    this.codeEditorService.getUserCodeHistory().subscribe(history => this.codeHistory = history);
   }
 }

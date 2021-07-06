@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {User} from '../models/user.model';
 import {Router} from '@angular/router';
 import jwt_decode from 'jwt-decode';
+import {TokenModel} from '../models/token.model';
+import {UserModel} from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   token: string;
-  decodedToken: any;
+  decodedToken: TokenModel;
 
   constructor(private router: Router,
               private http: HttpClient) {
@@ -23,7 +24,7 @@ export class AuthenticationService {
     }
   }
 
-  register(user: User): Observable<any>{
+  register(user: UserModel): Observable<any>{
     const options = {
       headers: new HttpHeaders({
         'Access-Control-Allow-Origin': '*',

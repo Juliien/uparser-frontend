@@ -1,4 +1,10 @@
-<div class="my-5">
+<!-- Error alert -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert" *ngIf="errorMessage">
+  <strong><i class="fas fa-exclamation-triangle fa-lg"></i> {{errorMessage}}</strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div class="my-5 container">
   <h2 class="title text-center">Créer son parser</h2>
 
   <div class="d-flex justify-content-start mt-5">
@@ -12,24 +18,27 @@
     <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
   </div>
   <hr/>
+  <select class="form-select mt-4 mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
+    <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
+  </select>
   <div class="d-flex justify-content-start">
     <ace-editor #editor></ace-editor>
     <div class="card ms-3">
-      <div class="card-body">
-<!--        <pre>sdt out : exit 0</pre>-->
-
-<!--        Spinner -->
-        <div *ngIf="spinner">
-          <div class="text-center mt-5" >
-            <div class="spinner-border text-primary" role="status" style="">
-              <span class="sr-only">Loading...</span>
-            </div>
+      <div class="card-body" *ngIf="runnerOutput">
+        <pre *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</pre>
+        <pre *ngIf="runnerOutput.stderr" style="color:red">{{runnerOutput.stderr}}</pre>
+      </div>
+      <!-- Spinner -->
+      <div *ngIf="spinner">
+        <div class="text-center mt-5" >
+          <div class="spinner-border text-primary" role="status" style="">
+            <span class="sr-only">Loading...</span>
           </div>
-          <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
         </div>
+        <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
       </div>
     </div>
   </div>
 
-  <button type="button" class="btn btn-primary my-3" (click)='convertFile()'>Convertir</button>
+  <button type="button" class="btn btn-primary my-3" (click)='convertFile()' [disabled]="spinner">Convertir</button>
 </div>
