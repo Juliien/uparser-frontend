@@ -25,6 +25,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   errorMessage: string;
   fileName: string;
   fileContent: any;
+  isTestEnable = false;
   spinner = false;
   exampleCode = `import sys
 
@@ -63,43 +64,60 @@ with open(argv[1]) as file:
     this.spinner = true;
     this.runnerOutput = null;
 
-    if (this.extensionType && this.fileContent && this.fileName) {
-      const fileExtension = this.fileName.split('.').pop();
+    if (this.isTestEnable === false) {
+      if (this.extensionType && this.fileContent && this.fileName) {
+        const fileExtension = this.fileName.split('.').pop();
+        const data: KafkaModel = {
+          id: '1',
+          inputfile: btoa(this.fileContent),
+          algorithm: btoa(this.editor.value),
+          from: fileExtension,
+          to: this.extensionType,
+          language: this.selectedLang
+        };
+
+        const checkCode = {
+          userId: this.userService.currentUser.id,
+          extensionStart: fileExtension,
+          extensionEnd: this.extensionType,
+          language: this.selectedLang,
+          codeEncoded: btoa(this.editor.value),
+          date: null
+        };
+        // test if user code is not a copied
+        this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
+        this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
+          this.runnerOutput = jsonData;
+          this.spinner = false;
+          this.downloadFile();
+        }, (error) => {
+          if (error.status === 500) {
+            this.errorMessage = 'Timeout !';
+            this.spinner = false;
+          }
+        });
+      } else {
+        this.errorMessage = 'Les champs ne peuvent pas être vides';
+        this.spinner = false;
+      }
+    } else {
       const data: KafkaModel = {
         id: '1',
-        inputfile: btoa(this.fileContent),
+        inputfile: '',
         algorithm: btoa(this.editor.value),
-        from: fileExtension,
-        to: this.extensionType,
+        from: '',
+        to: '',
         language: this.selectedLang
       };
-
-      const checkCode = {
-        userId: this.userService.currentUser.id,
-        extensionStart: fileExtension,
-        extensionEnd: this.extensionType,
-        language: this.selectedLang,
-        codeEncoded: btoa(this.editor.value),
-        date: null
-      };
-
-      // test if user code is not a copied
-      this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
-
       this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
         this.runnerOutput = jsonData;
         this.spinner = false;
-        // this.downloadFile();
       }, (error) => {
         if (error.status === 500) {
           this.errorMessage = 'Timeout !';
           this.spinner = false;
         }
       });
-    }
-    else {
-      this.errorMessage = 'Les champs ne peuvent pas être vides'
-      this.spinner = false;
     }
   }
 
@@ -122,10 +140,24 @@ with open(argv[1]) as file:
   }
 
   downloadFile(): void {
+    const fileContent = this.formatData();
     const newFileName = this.fileName.split('.').slice(0, -1).join('.');
-    const newFile = new File([this.runnerOutput.stdout], newFileName + '.' + this.extensionType, {type: 'text/' +
-        this.extensionType + ';charset=utf-8'});
+    const newFile = new File([fileContent], newFileName + '.' + this.extensionType,
+      {type: 'text/' + this.extensionType + ';charset=utf-8'});
     fileSaver.saveAs(newFile);
+  }
+
+  formatData(): string {
+    const data = this.runnerOutput.artifact;
+
+    return data.replace(/\\n/g, '\\n')
+      .replace(/\\'/g, '\\\'')
+      .replace(/\\"/g, '\\"')
+      .replace(/\\&/g, '\\&')
+      .replace(/\\r/g, '\\r')
+      .replace(/\\t/g, '\\t')
+      .replace(/\\b/g, '\\b')
+      .replace(/\\f/g, '\\f');
   }
 
   getUploadFile(e): void {

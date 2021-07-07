@@ -14,4 +14,8 @@ export class CatalogService {
   getCatalogue(): Observable<CodeModel[]> {
     return this.http.get<CodeModel[]>(environment.apiUrl + 'code/all');
   }
+
+  getCatalogueById(id): Observable<CodeModel> {
+    return this.http.get<CodeModel>(environment.apiUrl + 'code/' + id);
+  }
 }

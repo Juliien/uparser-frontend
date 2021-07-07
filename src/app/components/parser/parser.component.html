@@ -17,17 +17,40 @@
     <input class="form-control me-4" type="file" (change)="getUploadFile($event)">
     <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
   </div>
+
   <hr/>
-  <select class="form-select mt-4 mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
-    <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
-  </select>
+  <div class="d-flex justify-content-start">
+    <div class="form-check me-3 mt-1">
+      <input class="form-check-input" type="checkbox" [(ngModel)]="isTestEnable" id=checkbox>
+      <label class="form-check-label" for="checkbox">
+        Tester sans fichier
+      </label>
+    </div>
+
+    <select class="form-select mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
+      <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
+    </select>
+  </div>
   <div class="d-flex justify-content-start">
     <ace-editor #editor></ace-editor>
     <div class="card ms-3">
       <div class="card-body" *ngIf="runnerOutput">
-        <pre *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</pre>
-        <pre *ngIf="runnerOutput.stderr" style="color:red">{{runnerOutput.stderr}}</pre>
+        <div class="mb-2">
+          <span class="me-1">stdout :</span>
+          <code *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</code>
+        </div>
+        <div class="mb-2">
+          <span class="me-1">stderr :</span>
+          <code *ngIf="runnerOutput.stderr" style="color:red">{{runnerOutput.stderr}}</code>
+        </div>
+        <div>
+          <span class="me-1">contenue du fichier :</span>
+          <code *ngIf="runnerOutput.artifact && runnerOutput.artifact !== 'FILE NOT FOUND ERROR'">
+            {{runnerOutput.artifact}}
+          </code>
+        </div>
       </div>
+
       <!-- Spinner -->
       <div *ngIf="spinner">
         <div class="text-center mt-5" >
@@ -35,7 +58,7 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
+        <p class="text-center mt-1" *ngIf="isTestEnable === false"><strong>Conversion du fichier...</strong></p>
       </div>
     </div>
   </div>

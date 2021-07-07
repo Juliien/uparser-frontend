@@ -1,7 +1,7 @@
 <h2 class="text-center title my-5">Catalogue</h2>
 <div *ngFor="let parser of catalog" class="container">
   <div class="card-group">
-    <div class="card my-2">
+    <div class="card my-2" [routerLink]="['/catalogue', parser.id]">
       <div class="card-body">
         <h5 class="card-title">{{parser.extensionStart}} vers {{parser.extensionEnd}}</h5>
         <p class="card-text">language : {{parser.language}}</p>

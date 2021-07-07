@@ -16,12 +16,7 @@ export class CodeEditorService {
               private userService: UserService) {}
 
   postIntoKafkaTopic(formData: KafkaModel): Observable<RunnerOutputModel> {
-    const option = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce',  formData, option);
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce',  formData);
   }
 
   testUserCode(data: any): Observable<any> {
