@@ -14,40 +14,47 @@
     <select class="form-select me-4" [(ngModel)]="selectedTheme" (change)="updateTheme()">
       <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
-    <input class="form-control me-4" type="file" (change)="getUploadFile($event)">
-    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
-  </div>
-
-  <hr/>
-  <div class="d-flex justify-content-start">
-    <div class="form-check me-3 mt-1">
-      <input class="form-check-input" type="checkbox" [(ngModel)]="isTestEnable" id=checkbox>
-      <label class="form-check-label" for="checkbox">
-        Tester sans fichier
-      </label>
+    <select class="form-select me-4">
+      <option>Fichiers de tests</option>
+    </select>
+    <div class="upload-btn-wrapper">
+      <button class="btn btn-outline-secondary me-4"><i class="fas fa-folder-open me-1"></i>Choisir un fichier</button>
+      <input type="file" (change)="getUploadFile($event)"/>
     </div>
 
-    <select class="form-select mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
-      <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
-    </select>
+    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie"/>
   </div>
+  <hr/>
+
   <div class="d-flex justify-content-start">
-    <ace-editor #editor></ace-editor>
+
+    <div class="card card-head">
+        <div class="d-flex justify-content-between">
+            <div class="form-check form-switch mt-1">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [(ngModel)]="isTestEnable">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Tester sans fichier</label>
+            </div>
+          <select class="form-select mb-1" [(ngModel)]="selectedCode" (change)="updateCode()">
+            <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
+          </select>
+          <button type="button" class="btn btn-primary mb-1" (click)='convertFile()' [disabled]="spinner">
+            <i class="fas fa-play me-1"></i>Executer
+          </button>
+        </div>
+
+        <ace-editor #editor></ace-editor>
+    </div>
+
     <div class="card ms-3">
-      <div class="card-body" *ngIf="runnerOutput">
+      <div>Console</div>
+      <div class="card-body page" *ngIf="runnerOutput">
         <div class="mb-2">
           <span class="me-1">stdout :</span>
           <code *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</code>
         </div>
         <div class="mb-2">
           <span class="me-1">stderr :</span>
-          <code *ngIf="runnerOutput.stderr" style="color:red">{{runnerOutput.stderr}}</code>
-        </div>
-        <div>
-          <span class="me-1">contenue du fichier :</span>
-          <code *ngIf="runnerOutput.artifact && runnerOutput.artifact !== 'FILE NOT FOUND ERROR'">
-            {{runnerOutput.artifact}}
-          </code>
+          <code *ngIf="runnerOutput.stderr">{{runnerOutput.stderr}}</code>
         </div>
       </div>
 
@@ -62,6 +69,4 @@
       </div>
     </div>
   </div>
-
-  <button type="button" class="btn btn-primary my-3" (click)='convertFile()' [disabled]="spinner">Convertir</button>
 </div>

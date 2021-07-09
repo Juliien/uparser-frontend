@@ -2,7 +2,7 @@ ace-editor , .card {
   min-height: 500px;
   min-width: 300px;
   width: 100%;
-  border-radius: 12px;
+  border-radius: .25rem;
 }
 
 .spinner {
@@ -10,6 +10,24 @@ ace-editor , .card {
   align-items: center;
 }
 
-.history {
-  max-width: 250px;
+.form-select, .form-control {
+  max-width: 180px;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+.card-head {
+  background-color: transparent !important;
+  border: none !important;
 }
