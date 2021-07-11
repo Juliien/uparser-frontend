@@ -1,8 +1,8 @@
-ace-editor , .card {
+ace-editor {
   min-height: 500px;
-  min-width: 300px;
+  min-width: 600px;
   width: 100%;
-  border-radius: .25rem;
+  /*border-radius: .25rem;*/
 }
 
 .spinner {
@@ -27,7 +27,10 @@ ace-editor , .card {
   top: 0;
   opacity: 0;
 }
-.card-head {
-  background-color: transparent !important;
-  border: none !important;
+
+.header {
+  border: none;
+  background-color: #232323!important;
+  color: #e0e0e0;
+  border-radius: 0;
 }

@@ -27,9 +27,14 @@
   <hr/>
 
   <div class="d-flex justify-content-start">
-
-    <div class="card card-head">
-        <div class="d-flex justify-content-between">
+    <div class="card col-2 header">
+      <div class="card-header">
+        <p class="title">Liste des fichiers</p>
+      </div>
+      list
+    </div>
+    <div class="card col-6 header">
+        <div class="d-flex justify-content-between card-header">
             <div class="form-check form-switch mt-1">
               <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [(ngModel)]="isTestEnable">
               <label class="form-check-label" for="flexSwitchCheckDefault">Tester sans fichier</label>
@@ -45,8 +50,11 @@
         <ace-editor #editor></ace-editor>
     </div>
 
-    <div class="card ms-3">
-      <div>Console</div>
+    <div class="card output col-4 header">
+      <div class="d-flex justify-content-between card-header">
+        <p class="title">Console</p>
+        <button class="btn btn-outline-primary"><i class="far fa-eye me-1"></i> Afficher</button>
+      </div>
       <div class="card-body page" *ngIf="runnerOutput">
         <div class="mb-2">
           <span class="me-1">stdout :</span>
