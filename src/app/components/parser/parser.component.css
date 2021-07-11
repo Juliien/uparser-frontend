@@ -34,3 +34,7 @@ ace-editor {
   color: #e0e0e0;
   border-radius: 0;
 }
+
+.table-dark {
+  background-color: transparent !important;
+}
