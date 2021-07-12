@@ -6,6 +6,8 @@ import {AuthenticationService} from '../../services/authentication.service';
 import {KafkaModel} from '../../models/kafka.model';
 import {CodeModel} from '../../models/code.model';
 import {RunnerOutputModel} from '../../models/runner-output.model';
+import {FileModel} from '../../models/file.model';
+import {FileService} from '../../services/file.service';
 
 @Component({
   selector: 'app-parser',
@@ -21,6 +23,8 @@ export class ParserComponent implements AfterViewInit, OnInit {
   selectedCode: CodeModel;
   codeHistory: CodeModel[];
   runnerOutput: RunnerOutputModel;
+  selectedFile: FileModel;
+  testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
   fileName: string;
@@ -35,17 +39,18 @@ with open(argv[1]) as file:
 
   constructor(private codeEditorService: CodeEditorService,
               private userService: UserService,
-              private authService: AuthenticationService) {
+              private authService: AuthenticationService,
+              private fileService: FileService) {
   }
 
   ngOnInit(): void {
     if (!this.userService.currentUser) {
       this.userService.getUserByEmail(this.authService.decodedToken.email).subscribe(user => {
         this.userService.currentUser = user;
-        this.getUserCodeHistory();
+        this.init();
       });
     } else {
-      this.getUserCodeHistory();
+      this.init();
     }
   }
 
@@ -58,6 +63,11 @@ with open(argv[1]) as file:
     this.editor.setTheme(this.selectedTheme);
     this.editor.mode = this.selectedLang;
     this.editor.value = this.exampleCode;
+  }
+
+  init(): void {
+    this.codeEditorService.getUserCodeHistory().subscribe(history => this.codeHistory = history);
+    this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => this.testFiles = files);
   }
 
   convertFile(): void {
@@ -139,6 +149,10 @@ with open(argv[1]) as file:
     this.editor.setTheme(this.selectedTheme);
   }
 
+  updateFile(file: FileModel): void {
+    this.selectedFile = file;
+  }
+
   downloadFile(): void {
     const fileContent = this.formatData();
     const newFileName = this.fileName.split('.').slice(0, -1).join('.');
@@ -165,11 +179,29 @@ with open(argv[1]) as file:
     const fileReader = new FileReader();
     fileReader.onloadend = (() => {
       this.fileContent = fileReader.result;
+
+      const file = {
+        userId: this.userService.currentUser.id,
+        fileName: this.fileName,
+        fileContent: btoa(this.fileContent),
+        fileExtension: this.fileName.split('.').pop()
+      };
+      this.fileService.saveFile(file).subscribe(() => {
+        this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => {
+          this.testFiles = [];
+          this.testFiles = files;
+        });
+      });
     });
     fileReader.readAsText(e.target.files[0]);
   }
 
-  getUserCodeHistory(): void {
-    this.codeEditorService.getUserCodeHistory().subscribe(history => this.codeHistory = history);
+  deleteFile(id: string): void {
+    this.fileService.delete(id).subscribe(() => {
+      this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => {
+        this.testFiles = [];
+        this.testFiles = files;
+      });
+    });
   }
 }
