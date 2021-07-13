@@ -24,12 +24,10 @@ export class ParserComponent implements AfterViewInit, OnInit {
   codeHistory: CodeModel[];
   runnerOutput: RunnerOutputModel;
   selectedFile: FileModel;
+  viewCurrentFile: FileModel;
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
-  fileName: string;
-  fileContent: any;
-  isTestEnable = false;
   spinner = false;
   exampleCode = `import sys
 
@@ -57,8 +55,7 @@ with open(argv[1]) as file:
   ngAfterViewInit(): void {
     this.editor.getEditor().setOptions({
       showLineNumbers: true,
-      tabSize: 4,
-      enableBasicAutocompletion: true
+      tabSize: 4
     });
     this.editor.setTheme(this.selectedTheme);
     this.editor.mode = this.selectedLang;
@@ -74,21 +71,20 @@ with open(argv[1]) as file:
     this.spinner = true;
     this.runnerOutput = null;
 
-    if (this.isTestEnable === false) {
-      if (this.extensionType && this.fileContent && this.fileName) {
-        const fileExtension = this.fileName.split('.').pop();
+    if (this.selectedFile) {
+      if (this.extensionType) {
         const data: KafkaModel = {
           id: '1',
-          inputfile: btoa(this.fileContent),
+          inputfile: btoa(this.selectedFile.fileContent),
           algorithm: btoa(this.editor.value),
-          from: fileExtension,
+          from: this.selectedFile.fileExtension,
           to: this.extensionType,
           language: this.selectedLang
         };
 
         const checkCode = {
           userId: this.userService.currentUser.id,
-          extensionStart: fileExtension,
+          extensionStart: this.selectedFile.fileExtension,
           extensionEnd: this.extensionType,
           language: this.selectedLang,
           codeEncoded: btoa(this.editor.value),
@@ -155,7 +151,7 @@ with open(argv[1]) as file:
 
   downloadFile(): void {
     const fileContent = this.formatData();
-    const newFileName = this.fileName.split('.').slice(0, -1).join('.');
+    const newFileName = this.selectedFile.fileName.split('.').slice(0, -1).join('.');
     const newFile = new File([fileContent], newFileName + '.' + this.extensionType,
       {type: 'text/' + this.extensionType + ';charset=utf-8'});
     fileSaver.saveAs(newFile);
@@ -175,17 +171,17 @@ with open(argv[1]) as file:
   }
 
   getUploadFile(e): void {
-    this.fileName = e.target.files[0].name;
     const fileReader = new FileReader();
     fileReader.onloadend = (() => {
-      this.fileContent = fileReader.result;
+      const fileContent: any = fileReader.result;
 
       const file = {
         userId: this.userService.currentUser.id,
-        fileName: this.fileName,
-        fileContent: btoa(this.fileContent),
-        fileExtension: this.fileName.split('.').pop()
+        fileName: e.target.files[0].name,
+        fileContent: btoa(fileContent),
+        fileExtension: e.target.files[0].name.split('.').pop()
       };
+
       this.fileService.saveFile(file).subscribe(() => {
         this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => {
           this.testFiles = [];
@@ -203,5 +199,10 @@ with open(argv[1]) as file:
         this.testFiles = files;
       });
     });
+  }
+
+  openCurrentFile(file: FileModel): void {
+    this.viewCurrentFile = file;
+    this.viewCurrentFile.fileContent = atob(file.fileContent);
   }
 }

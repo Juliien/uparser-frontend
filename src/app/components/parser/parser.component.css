@@ -2,12 +2,21 @@ ace-editor {
   min-height: 500px;
   min-width: 600px;
   width: 100%;
-  /*border-radius: .25rem;*/
 }
 
 .spinner {
   display: flex;
   align-items: center;
+}
+
+.left {
+  border-top-left-radius: .35rem !important;
+  border-bottom-left-radius: .35rem !important;
+}
+
+.right {
+  border-top-right-radius: .35rem !important;
+  border-bottom-right-radius: .35rem !important;
 }
 
 .form-select, .form-control {
@@ -30,11 +39,11 @@ ace-editor {
 
 .header {
   border: none;
-  background-color: #232323!important;
-  color: #e0e0e0;
+  background-color: #232323 !important;
+  color: #e0e0e0 !important;
   border-radius: 0;
 }
 
-.table-dark {
-  background-color: transparent !important;
+.card-header {
+  border-bottom: none !important;
 }

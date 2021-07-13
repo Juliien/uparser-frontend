@@ -7,7 +7,7 @@
 <div class="my-5 container">
   <h2 class="title text-center">Créer son parser</h2>
 
-  <div class="d-flex justify-content-start mt-5">
+  <div class="d-flex justify-content-center mt-5 mb-2">
     <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
       <option *ngFor="let language of languages">{{language}}</option>
     </select>
@@ -21,33 +21,27 @@
 
     <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie"/>
   </div>
-  <hr/>
 
   <div class="d-flex justify-content-start">
-    <div class="card col-2 header">
+    <div class="card col-2 header left">
       <div class="card-header">
         <p class="title">Liste des fichiers</p>
       </div>
-      <div class="card-body">
-        <table class="table table-dark">
-          <tbody *ngFor="let file of testFiles">
-          <tr>
-            <td>{{file.fileName}}</td>
-            <td><i class="far fa-eye"></i></td>
-            <td *ngIf="selectedFile === file"><i class="fas fa-check-square"></i></td>
-            <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
-            <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
+
+      <table class="table table-dark">
+        <tbody *ngFor="let file of testFiles">
+        <tr>
+          <td>{{file.fileName}}</td>
+          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openCurrentFile(file)"></i></td>
+          <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
+          <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
+          <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
+        </tr>
+        </tbody>
+      </table>
     </div>
     <div class="card col-6 header">
         <div class="d-flex justify-content-between card-header">
-            <div class="form-check form-switch mt-2">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" [(ngModel)]="isTestEnable">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Tester sans fichier</label>
-            </div>
           <select class="form-select" [(ngModel)]="selectedCode" (change)="updateCode()">
             <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
           </select>
@@ -59,19 +53,38 @@
         <ace-editor #editor></ace-editor>
     </div>
 
-    <div class="card output col-4 header">
-      <div class="d-flex justify-content-between card-header">
-        <p class="title">Console</p>
-        <button class="btn btn-outline-primary"><i class="far fa-eye me-1"></i> Afficher</button>
-      </div>
-      <div class="card-body page" *ngIf="runnerOutput">
-        <div class="mb-2">
-          <span class="me-1">stdout :</span>
-          <code *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</code>
+    <div class="card output col-4 header right">
+      <ul class="nav nav-pills card-header" id="tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active title" data-bs-toggle="tab" data-bs-target="#home"
+                  type="button" role="tab" aria-controls="home" aria-selected="true">
+            Console
+          </button>
+        </li>
+        <li class="nav-item title" role="presentation">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile"
+                  type="button" role="tab" aria-selected="false">
+            Afficher
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active row" id="home" role="tabpanel">
+          <div class="">
+            <p class="me-3">stdout</p>
+            <hr>
+            <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
+          </div>
+          <div class="">
+            <hr>
+            <p class="me-3">stderr</p>
+            <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
+          </div>
         </div>
-        <div class="mb-2">
-          <span class="me-1">stderr :</span>
-          <code *ngIf="runnerOutput.stderr">{{runnerOutput.stderr}}</code>
+        <div class="tab-pane fade" id="profile" role="tabpanel">
+          <p class="me-3">contenue du fichier</p>
+          <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
         </div>
       </div>
 
@@ -82,7 +95,23 @@
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <p class="text-center mt-1" *ngIf="isTestEnable === false"><strong>Conversion du fichier...</strong></p>
+        <p class="text-center mt-1" *ngIf="selectedFile"><strong>Conversion du fichier...</strong></p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" *ngIf="viewCurrentFile">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{viewCurrentFile.fileName}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{viewCurrentFile.fileContent}}
       </div>
     </div>
   </div>
