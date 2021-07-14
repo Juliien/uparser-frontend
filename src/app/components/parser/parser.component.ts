@@ -158,9 +158,7 @@ with open(argv[1]) as file:
   }
 
   formatData(): string {
-    const data = this.runnerOutput.artifact;
-
-    return data.replace(/\\n/g, '\\n')
+    return this.runnerOutput.artifact.replace(/\\n/g, '\\n')
       .replace(/\\'/g, '\\\'')
       .replace(/\\"/g, '\\"')
       .replace(/\\&/g, '\\&')

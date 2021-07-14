@@ -47,3 +47,24 @@ ace-editor {
 .card-header {
   border-bottom: none !important;
 }
+
+.tab-content, .tab-pane {
+  height: 100% !important;
+}
+
+.display-box {
+  height: 50% !important;
+}
+
+.active {
+  color: #e0e0e0 !important;
+}
+
+.nav-link {
+  color: #7E7E7E;
+}
+
+.nav-link:hover {
+  color: #e0e0e0;
+  cursor: pointer;
+}

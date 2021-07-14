@@ -25,14 +25,14 @@
   <div class="d-flex justify-content-start">
     <div class="card col-2 header left">
       <div class="card-header">
-        <p class="title">Liste des fichiers</p>
+        <a class="title nav-link active cursor-default">Liste des fichiers</a>
       </div>
 
       <table class="table table-dark">
         <tbody *ngFor="let file of testFiles">
         <tr>
           <td>{{file.fileName}}</td>
-          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="openCurrentFile(file)"></i></td>
+          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
           <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
           <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
           <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
@@ -54,36 +54,42 @@
     </div>
 
     <div class="card output col-4 header right">
-      <ul class="nav nav-pills card-header" id="tab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active title" data-bs-toggle="tab" data-bs-target="#home"
-                  type="button" role="tab" aria-controls="home" aria-selected="true">
-            Console
-          </button>
-        </li>
-        <li class="nav-item title" role="presentation">
-          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile"
-                  type="button" role="tab" aria-selected="false">
-            Afficher
-          </button>
-        </li>
-      </ul>
 
+      <!-- header -->
+      <div class="card-header d-flex justify-content-between">
+        <ul class="nav" id="tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link title active" data-bs-toggle="tab" data-bs-target="#console" role="tab" aria-selected="true">
+              Console
+            </a>
+          </li>
+          <li class="nav-item title" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#file" role="tab" aria-selected="false">
+              Afficher
+            </a>
+          </li>
+        </ul>
+        <button type="button" class="btn btn-outline-light" (click)="downloadFile()" [disabled]="!runnerOutput">
+          <i class="fas fa-download me-1"></i>Télécharger
+        </button>
+      </div>
+
+      <!-- content -->
       <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active row" id="home" role="tabpanel">
-          <div class="">
-            <p class="me-3">stdout</p>
-            <hr>
+        <div class="tab-pane fade show active" id="console" role="tabpanel">
+          <div class="display-box">
+            <p class="ms-2">stdout</p>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
-          <div class="">
+          <div class="display-box">
             <hr>
-            <p class="me-3">stderr</p>
+            <p class="ms-2">stderr</p>
             <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
           </div>
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel">
-          <p class="me-3">contenue du fichier</p>
+
+        <div class="tab-pane fade" id="file" role="tabpanel">
+          <p class="ms-2">contenue du fichier</p>
           <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
         </div>
       </div>
@@ -103,11 +109,11 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content" *ngIf="viewCurrentFile">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{viewCurrentFile.fileName}}</h5>
+        <h5 class="modal-title" id="modalLabel">{{viewCurrentFile.fileName}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
