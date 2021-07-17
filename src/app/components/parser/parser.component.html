@@ -74,29 +74,9 @@
         </button>
       </div>
 
-      <!-- content -->
-      <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="console" role="tabpanel">
-          <div class="display-box">
-            <p class="ms-2">stdout</p>
-            <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
-          </div>
-          <div class="display-box">
-            <hr>
-            <p class="ms-2">stderr</p>
-            <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
-          </div>
-        </div>
-
-        <div class="tab-pane fade" id="file" role="tabpanel">
-          <p class="ms-2">contenue du fichier</p>
-          <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
-        </div>
-      </div>
-
       <!-- Spinner -->
       <div *ngIf="spinner">
-        <div class="text-center mt-5" >
+        <div class="text-center my-5">
           <div class="spinner-border text-primary" role="status" style="">
             <span class="sr-only">Loading...</span>
           </div>
@@ -104,6 +84,25 @@
         <p class="text-center mt-1" *ngIf="selectedFile"><strong>Conversion du fichier...</strong></p>
       </div>
 
+      <!-- content -->
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="console" role="tabpanel">
+          <div class="display-box ms-2">
+            <p>stdout</p>
+            <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
+          </div>
+          <div class="display-box ms-2">
+            <hr>
+            <p>stderr</p>
+            <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
+          </div>
+        </div>
+
+        <div class="tab-pane fade ms-2" id="file" role="tabpanel">
+          <p>contenue du fichier</p>
+          <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
+        </div>
+      </div>
     </div>
   </div>
 </div>
