@@ -64,7 +64,7 @@ ace-editor {
   color: #7E7E7E;
 }
 
-.nav-link:hover {
+.nav-link:hover, td:hover {
   color: #e0e0e0;
   cursor: pointer;
 }

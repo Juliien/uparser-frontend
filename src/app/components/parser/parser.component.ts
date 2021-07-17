@@ -63,8 +63,11 @@ with open(argv[1]) as file:
   }
 
   init(): void {
-    this.codeEditorService.getUserCodeHistory().subscribe(history => this.codeHistory = history);
-    this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => this.testFiles = files);
+    this.codeEditorService.getUserCodeHistory().subscribe((history) => this.codeHistory = history);
+    this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => {
+      files.forEach(file => file.fileContent = atob(file.fileContent));
+      this.testFiles = files;
+    });
   }
 
   convertFile(): void {
@@ -150,22 +153,11 @@ with open(argv[1]) as file:
   }
 
   downloadFile(): void {
-    const fileContent = this.formatData();
+    const fileContent = this.runnerOutput.artifact;
     const newFileName = this.selectedFile.fileName.split('.').slice(0, -1).join('.');
     const newFile = new File([fileContent], newFileName + '.' + this.extensionType,
       {type: 'text/' + this.extensionType + ';charset=utf-8'});
     fileSaver.saveAs(newFile);
-  }
-
-  formatData(): string {
-    return this.runnerOutput.artifact.replace(/\\n/g, '\\n')
-      .replace(/\\'/g, '\\\'')
-      .replace(/\\"/g, '\\"')
-      .replace(/\\&/g, '\\&')
-      .replace(/\\r/g, '\\r')
-      .replace(/\\t/g, '\\t')
-      .replace(/\\b/g, '\\b')
-      .replace(/\\f/g, '\\f');
   }
 
   getUploadFile(e): void {
@@ -201,6 +193,5 @@ with open(argv[1]) as file:
 
   openCurrentFile(file: FileModel): void {
     this.viewCurrentFile = file;
-    this.viewCurrentFile.fileContent = atob(file.fileContent);
   }
 }
