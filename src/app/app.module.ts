@@ -13,6 +13,8 @@ import {AceEditorModule} from 'ng2-ace-editor';
 import {LoginComponent} from './components/authentication/login/login.component';
 import {RegisterComponent} from './components/authentication/register/register.component';
 import {HttpClientModule} from '@angular/common/http';
+import { ProfileComponent } from './components/profile/profile.component';
+import { CatalogueComponent } from './components/catalogue/catalogue.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import {HttpClientModule} from '@angular/common/http';
     HomeComponent,
     ParserComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ProfileComponent,
+    CatalogueComponent
   ],
   imports: [
     BrowserModule,

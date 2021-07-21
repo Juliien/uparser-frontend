@@ -1,6 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Play:wght@700&display=swap');
 
+html, body {
+  background-color: #F7F7F6 !important;
+  overflow-x: hidden !important;
+
+}
 .title {
   font-family: 'Play', sans-serif !important;
+}
+
+.box-shadow {
+  -webkit-box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08) !important;
+  box-shadow: 0 1px 20px 0 rgba(69, 90, 100, 0.08) !important;
 }

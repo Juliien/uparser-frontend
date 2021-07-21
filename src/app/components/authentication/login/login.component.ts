@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthenticationService} from '../../../services/authentication.service';
-import jwt_decode from 'jwt-decode';
+import {UserService} from '../../../services/user.service';
+import {EmailModel} from '../../../models/email.model';
 
 
 @Component({
@@ -15,10 +16,18 @@ export class LoginComponent implements OnInit {
   emailCtrl: FormControl;
   passwordCtrl: FormControl;
   errorMessage: string;
+  newPassword: string;
+  currentEmail: string;
+  verificationCode: string;
+  isChangePasswordEnable: boolean;
+  isEmailSend: boolean;
+  isCodeVerified: boolean;
+  displayAlert: boolean;
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
-              private authenticationService: AuthenticationService
+              private authenticationService: AuthenticationService,
+              private userService: UserService
   ) {
     this.emailCtrl = formBuilder.control('', Validators.required);
     this.passwordCtrl = formBuilder.control('', Validators.required);
@@ -30,23 +39,66 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.authenticationService.isLogged() === true) {
+      this.router.navigate(['home']).then();
+    }
   }
 
   onSubmit(): void {
     this.authenticationService.login(this.loginForm.value).subscribe(result => {
-      this.authenticationService.token = result.token;
       localStorage.setItem('token', result.token);
-      const decoded: any = jwt_decode(result.token);
-      console.log(decoded.sub);
+      this.authenticationService.token = result.token;
+      this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
       this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {
         case 403:
-          this.errorMessage = 'Email ou mot de passe incorrect !';
+          this.errorMessage = 'E-mail ou mot de passe incorrect !';
           break;
         case 400:
-          this.errorMessage = 'Fields can\'t be empty!';
+          this.errorMessage = 'Fields can\'t be empty !';
+          break;
       }
+    });
+  }
+
+  sendEmail(): void {
+    const mailData: EmailModel = {
+      mailFrom: 'uparser.support@gmail.com',
+      mailTo: this.currentEmail,
+      mailSubject: 'Uparser - Mot de passe perdu',
+      mailContent: ''
+    };
+    this.userService.sendUserMail(mailData).subscribe();
+    this.isEmailSend = true;
+  }
+
+  verifyUser(): void {
+    const formData = {
+      email: this.currentEmail,
+      password: this.verificationCode
+    };
+
+    this.authenticationService.login(formData).subscribe(result => {
+      this.authenticationService.token = result.token;
+      this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
+
+      this.userService.getUserByEmail(this.authenticationService.decodedToken.email).subscribe(user => {
+        this.userService.currentUser = user;
+        this.isCodeVerified = true;
+        this.isEmailSend = false;
+      });
+    }, () => {
+      this.errorMessage = 'Le code de verification est incorrect !';
+    });
+  }
+
+  changePassword(): void {
+    this.userService.currentUser.password = this.newPassword;
+    this.userService.changeUserPassword(this.userService.currentUser).subscribe(user => {
+      this.userService.currentUser = user;
+      this.isChangePasswordEnable = false;
+      this.displayAlert = true;
     });
   }
 }
