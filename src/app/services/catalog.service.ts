@@ -11,11 +11,11 @@ export class CatalogService {
 
   constructor(private http: HttpClient) {}
 
-  getCatalogue(): Observable<CodeModel[]> {
-    return this.http.get<CodeModel[]>(environment.apiUrl + 'code/all');
+  getCatalog(): Observable<CodeModel[]> {
+    return this.http.get<CodeModel[]>(environment.apiUrl + 'catalog');
   }
 
-  getCatalogueById(id): Observable<CodeModel> {
-    return this.http.get<CodeModel>(environment.apiUrl + 'code/' + id);
+  getCatalogById(id): Observable<CodeModel> {
+    return this.http.get<CodeModel>(environment.apiUrl + 'catalog/item/' + id);
   }
 }

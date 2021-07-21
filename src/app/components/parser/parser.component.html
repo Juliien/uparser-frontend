@@ -3,13 +3,14 @@
   <strong><i class="fas fa-exclamation-triangle fa-lg"></i> {{errorMessage}}</strong>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
 <div class="my-5 container">
   <h2 class="title text-center">Créer son parser</h2>
 
   <div class="d-flex justify-content-center mt-5 mb-2">
     <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
-      <option *ngFor="let language of languages">{{language}}</option>
+      <option *ngFor="let language of languages" data-icon="../../../assets/images/{{language}}_icon.png">
+        {{language}}
+      </option>
     </select>
     <select class="form-select me-4" [(ngModel)]="selectedTheme" (change)="updateTheme()">
       <option *ngFor="let theme of themes">{{theme}}</option>
@@ -92,7 +93,7 @@
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
           <div class="display-box ms-2">
-            <hr>
+            <hr class="me-2">
             <p>stderr</p>
             <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
           </div>

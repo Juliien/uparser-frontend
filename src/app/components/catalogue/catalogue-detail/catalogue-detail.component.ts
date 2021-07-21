@@ -22,7 +22,7 @@ export class CatalogueDetailComponent implements OnInit {
               private codeEditorService: CodeEditorService) { }
 
   ngOnInit(): void {
-    this.catalogService.getCatalogueById(document.location.href.substring(document.location.href.lastIndexOf('/') + 1))
+    this.catalogService.getCatalogById(document.location.href.substring(document.location.href.lastIndexOf('/') + 1))
       .subscribe(data => this.parser = data);
   }
 
