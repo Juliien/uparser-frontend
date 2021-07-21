@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="card my-2">
+    <div class="card-body">
+      <h5 class="card-title">{{parser.extensionStart}} vers {{parser.extensionEnd}}</h5>
+      <p class="card-text">language : {{parser.language}}</p>
+      <p class="card-text"><small class="text-muted">créer le : {{parser.date}}</small></p>
+    </div>
+  </div>
+  <input class="form-control" type="file" (change)="getUploadFile($event)">
+
+  <!-- Spinner -->
+  <div *ngIf="spinner">
+    <div class="text-center mt-5" >
+      <div class="spinner-border text-primary" role="status" style="">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
+  </div>
+
+  <button type="button" class="btn btn-primary my-3" (click)='convertFile()' [disabled]="spinner">Convertir</button>
+</div>
