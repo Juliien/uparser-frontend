@@ -1,5 +1,6 @@
 {
   "baseUrl": "http://localhost:4200",
-  "username": "mk",
-  "password": "qwerty"
+  "username": "karim@gmail.com",
+  "password": "123456789",
+  "defaultCommandTimeout": 4000
 }
