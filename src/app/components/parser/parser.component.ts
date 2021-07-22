@@ -93,18 +93,10 @@ with open(argv[1]) as file:
           codeEncoded: btoa(this.editor.value),
           date: null
         };
+
         // test if user code is not a copied
         this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
-        this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
-          this.runnerOutput = jsonData;
-          this.spinner = false;
-          this.downloadFile();
-        }, (error) => {
-          if (error.status === 500) {
-            this.errorMessage = 'Timeout !';
-            this.spinner = false;
-          }
-        });
+        this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
         this.spinner = false;
@@ -118,16 +110,20 @@ with open(argv[1]) as file:
         to: '',
         language: this.selectedLang
       };
-      this.codeEditorService.postIntoKafkaTopic(data).subscribe(jsonData => {
-        this.runnerOutput = jsonData;
-        this.spinner = false;
-      }, (error) => {
-        if (error.status === 500) {
-          this.errorMessage = 'Timeout !';
-          this.spinner = false;
-        }
-      });
+      this.postToKafka(data);
     }
+  }
+
+  postToKafka(model: KafkaModel): void {
+    this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
+      this.runnerOutput = jsonData;
+      this.spinner = false;
+    }, (error) => {
+      if (error.status === 500) {
+        this.errorMessage = 'Timeout !';
+        this.spinner = false;
+      }
+    });
   }
 
   updateLang(): void {
@@ -175,6 +171,7 @@ with open(argv[1]) as file:
       this.fileService.saveFile(file).subscribe(() => {
         this.fileService.getFilesByUserId(this.userService.currentUser.id).subscribe(files => {
           this.testFiles = [];
+          files.forEach(f => f.fileContent = atob(f.fileContent));
           this.testFiles = files;
         });
       });

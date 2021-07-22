@@ -1,9 +1,9 @@
 <div class="container">
   <h2 class="text-center title my-5">Catalogue</h2>
 
-  <div class="card-deck d-flex justify-content-center row" *ngIf="catalog">
+  <div class="card-deck d-flex justify-content-center" *ngIf="catalog">
     <div *ngFor="let parser of catalog">
-      <div class="card" [routerLink]="['/catalogue', parser.id]">
+      <div class="card mx-2" [routerLink]="['/catalogue', parser.id]">
         <div class="card-body">
           <p class="text-center"><i class="far fa-file-alt fa-5x"></i></p>
           <p class="card-subtitle text-center">{{parser.extensionStart}} vers {{parser.extensionEnd}}</p>

@@ -47,7 +47,7 @@ export class CatalogueDetailComponent implements OnInit {
         language: this.parser.language
       };
 
-      this.codeEditorService.postIntoKafkaTopic(data).subscribe(json => {
+      this.codeEditorService.postIntoKafkaTopic(data, '1').subscribe(json => {
         this.runner = json;
         this.spinner = false;
         this.downloadFile();

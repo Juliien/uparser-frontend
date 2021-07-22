@@ -15,8 +15,8 @@ export class CodeEditorService {
   constructor(private http: HttpClient,
               private userService: UserService) {}
 
-  postIntoKafkaTopic(formData: KafkaModel): Observable<RunnerOutputModel> {
-    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce',  formData);
+  postIntoKafkaTopic(formData: KafkaModel, id: string): Observable<RunnerOutputModel> {
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce/' + id,  formData);
   }
 
   testUserCode(data: any): Observable<any> {
