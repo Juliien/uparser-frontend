@@ -36,4 +36,14 @@ export class CodeEditorService {
     };
     return this.http.get<CodeModel[]>(environment.apiUrl + 'code/history/' + this.userService.currentUser.id , option);
   }
+
+  isCodePlagiarism(code: any): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
+  }
+
 }

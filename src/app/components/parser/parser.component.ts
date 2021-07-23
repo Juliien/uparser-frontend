@@ -91,11 +91,13 @@ with open(argv[1]) as file:
           extensionEnd: this.extensionType,
           language: this.selectedLang,
           codeEncoded: btoa(this.editor.value),
-          date: null
         };
 
         // test if user code is not a copied
-        this.codeEditorService.testUserCode(checkCode).subscribe(codeResult => console.log(codeResult));
+        this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
+          this.selectedCode = code;
+          console.log(this.selectedCode);
+        });
         this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
@@ -117,7 +119,9 @@ with open(argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
+      // do algo
       this.spinner = false;
+
     }, (error) => {
       if (error.status === 500) {
         this.errorMessage = 'Timeout !';
