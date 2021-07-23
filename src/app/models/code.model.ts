@@ -4,6 +4,9 @@ export class CodeModel {
   codeEncoded: string;
   extensionStart: string;
   extensionEnd: string;
+  hash: string;
   language: string;
+  isPlagiarism: boolean;
+  isEnable: boolean;
   date: Date;
 }

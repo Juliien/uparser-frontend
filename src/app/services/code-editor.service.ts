@@ -15,13 +15,8 @@ export class CodeEditorService {
   constructor(private http: HttpClient,
               private userService: UserService) {}
 
-  postIntoKafkaTopic(formData: KafkaModel): Observable<RunnerOutputModel> {
-    const option = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce',  formData, option);
+  postIntoKafkaTopic(formData: KafkaModel, id: string): Observable<RunnerOutputModel> {
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce/' + id,  formData);
   }
 
   testUserCode(data: any): Observable<any> {
@@ -41,4 +36,14 @@ export class CodeEditorService {
     };
     return this.http.get<CodeModel[]>(environment.apiUrl + 'code/history/' + this.userService.currentUser.id , option);
   }
+
+  isCodePlagiarism(code: any): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
+  }
+
 }

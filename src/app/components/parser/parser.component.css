@@ -1,8 +1,7 @@
-ace-editor , .card {
+ace-editor {
   min-height: 500px;
-  min-width: 300px;
+  min-width: 600px;
   width: 100%;
-  border-radius: 12px;
 }
 
 .spinner {
@@ -10,6 +9,62 @@ ace-editor , .card {
   align-items: center;
 }
 
-.history {
-  max-width: 250px;
+.left {
+  border-top-left-radius: .35rem !important;
+  border-bottom-left-radius: .35rem !important;
+}
+
+.right {
+  border-top-right-radius: .35rem !important;
+  border-bottom-right-radius: .35rem !important;
+}
+
+.form-select, .form-control {
+  max-width: 180px;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.header {
+  border: none;
+  background-color: #232323 !important;
+  color: #e0e0e0 !important;
+  border-radius: 0;
+}
+
+.card-header {
+  border-bottom: none !important;
+}
+
+.tab-content, .tab-pane {
+  height: 100% !important;
+}
+
+.display-box {
+  height: 50% !important;
+}
+
+.active {
+  color: #e0e0e0 !important;
+}
+
+.nav-link {
+  color: #7E7E7E;
+}
+
+.nav-link:hover, td:hover {
+  color: #e0e0e0;
+  cursor: pointer;
 }
