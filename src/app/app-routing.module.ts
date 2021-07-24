@@ -8,12 +8,14 @@ import {RegisterComponent} from './components/authentication/register/register.c
 import {GuardService} from './services/guard.service';
 import {ProfileComponent} from './components/profile/profile.component';
 import {CatalogueComponent} from './components/catalogue/catalogue.component';
+import {CatalogueDetailComponent} from './components/catalogue/catalogue-detail/catalogue-detail.component';
 
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'catalogue', component: CatalogueComponent },
+  { path: 'catalogue/:id', component: CatalogueDetailComponent },
   { path: 'parser', component: ParserComponent,  canActivate: [GuardService] },
   { path: 'profile', component: ProfileComponent,  canActivate: [GuardService] },
   { path: 'login', component: LoginComponent },

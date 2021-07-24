@@ -3,42 +3,122 @@
   <strong><i class="fas fa-exclamation-triangle fa-lg"></i> {{errorMessage}}</strong>
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
-
 <div class="my-5 container">
   <h2 class="title text-center">Créer son parser</h2>
 
-  <div class="d-flex justify-content-start mt-5">
+  <div class="d-flex justify-content-center mt-5 mb-2">
     <select class="form-select me-4" [(ngModel)]="selectedLang" (change)="updateLang()">
-      <option *ngFor="let language of languages">{{language}}</option>
+      <option *ngFor="let language of languages" data-icon="../../../assets/images/{{language}}_icon.png">
+        {{language}}
+      </option>
     </select>
     <select class="form-select me-4" [(ngModel)]="selectedTheme" (change)="updateTheme()">
       <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
-    <input class="form-control me-4" type="file" (change)="getUploadFile($event)">
-    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie">
+    <div class="upload-btn-wrapper">
+      <button class="btn btn-outline-secondary me-4"><i class="fas fa-folder-open me-1"></i>Choisir un fichier</button>
+      <input type="file" (change)="getUploadFile($event)"/>
+    </div>
+
+    <input class="form-control me-4" type="text" [(ngModel)]="extensionType" placeholder="Extension en sortie"/>
   </div>
-  <hr/>
-  <select class="form-select mt-4 mb-1 history" [(ngModel)]="selectedCode" (change)="updateCode()">
-    <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
-  </select>
+
   <div class="d-flex justify-content-start">
-    <ace-editor #editor></ace-editor>
-    <div class="card ms-3">
-      <div class="card-body" *ngIf="runnerOutput">
-        <pre *ngIf="runnerOutput.stdout">{{runnerOutput.stdout}}</pre>
-        <pre *ngIf="runnerOutput.stderr" style="color:red">{{runnerOutput.stderr}}</pre>
+    <div class="card col-2 header left">
+      <div class="card-header">
+        <a class="title nav-link active cursor-default">Liste des fichiers</a>
       </div>
+
+      <table class="table table-dark">
+        <tbody *ngFor="let file of testFiles">
+        <tr>
+          <td>{{file.fileName}}</td>
+          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
+          <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
+          <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
+          <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card col-6 header">
+        <div class="d-flex justify-content-between card-header">
+          <select class="form-select" [(ngModel)]="selectedCode" (change)="updateCode()">
+            <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
+          </select>
+          <button type="button" class="btn btn-primary" (click)='convertFile()' [disabled]="spinner">
+            <i class="fas fa-play me-1"></i>Executer
+          </button>
+        </div>
+
+        <ace-editor #editor></ace-editor>
+    </div>
+
+    <div class="card output col-4 header right">
+
+      <!-- header -->
+      <div class="card-header d-flex justify-content-between">
+        <ul class="nav" id="tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link title active" data-bs-toggle="tab" data-bs-target="#console" role="tab" aria-selected="true">
+              Console
+            </a>
+          </li>
+          <li class="nav-item title" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#file" role="tab" aria-selected="false">
+              Afficher
+            </a>
+          </li>
+        </ul>
+        <button type="button" class="btn btn-outline-light" (click)="downloadFile()" [disabled]="!runnerOutput">
+          <i class="fas fa-download me-1"></i>Télécharger
+        </button>
+      </div>
+
       <!-- Spinner -->
       <div *ngIf="spinner">
-        <div class="text-center mt-5" >
+        <div class="text-center my-5">
           <div class="spinner-border text-primary" role="status" style="">
             <span class="sr-only">Loading...</span>
           </div>
         </div>
-        <p class="text-center mt-1"><strong>Conversion du fichier...</strong></p>
+        <p class="text-center mt-1" *ngIf="selectedFile"><strong>Conversion du fichier...</strong></p>
+      </div>
+
+      <!-- content -->
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="console" role="tabpanel">
+          <div class="display-box ms-2">
+            <p>stdout</p>
+            <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
+          </div>
+          <div class="display-box ms-2">
+            <hr class="me-2">
+            <p>stderr</p>
+            <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
+          </div>
+        </div>
+
+        <div class="tab-pane fade ms-2" id="file" role="tabpanel">
+          <p>contenue du fichier</p>
+          <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
+        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <button type="button" class="btn btn-primary my-3" (click)='convertFile()' [disabled]="spinner">Convertir</button>
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" *ngIf="viewCurrentFile">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">{{viewCurrentFile.fileName}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{viewCurrentFile.fileContent}}
+      </div>
+    </div>
+  </div>
 </div>
