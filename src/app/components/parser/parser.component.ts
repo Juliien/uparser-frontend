@@ -93,19 +93,15 @@ with open(argv[1]) as file:
           language: this.selectedLang,
           codeEncoded: btoa(this.editor.value),
         };
-
         // test if user code is not a copied
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
           // test if quality of code
           this.codeEditorService.testCodeQuality(code).subscribe(result => {
             this.selectedCode = result;
-            console.log(this.selectedCode);
+            // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
+            this.postToKafka(data);
           });
         });
-
-        // parsing file
-        this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
-        this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
         this.spinner = false;
@@ -126,19 +122,22 @@ with open(argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
-
       // && this.runnerOutput.artifact === this.backendArtifact
       if (this.runnerOutput.stderr === '') {
           // saveCode
+          this.codeEditorService.addCode(this.selectedCode).subscribe(result => {
+            this.selectedCode = result;
+            if (this.selectedCode.codeMark >= 5 && this.selectedCode.isPlagiarism === false) {
+              // enable for catalog
+              this.codeEditorService.enableCodeToCatalog(this.selectedCode).subscribe(res => {
+                this.selectedCode = res;
+              });
+            }
+          });
           // save run
           console.log('saved');
-          if (this.selectedCode.codeMark >= 5 && !this.selectedCode.isPlagiarism) {
-            // upade code to enable for catalog
-            console.log('upaded');
-          }
       }
       this.spinner = false;
-
     }, (error) => {
       if (error.status === 500) {
         this.errorMessage = 'Timeout !';

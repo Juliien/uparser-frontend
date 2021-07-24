@@ -54,4 +54,22 @@ export class CodeEditorService {
     };
     return this.http.post<string>(environment.apiUrl + 'quality/parse', artifact, option);
   }
+
+  addCode(code: any): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeModel>(environment.apiUrl + 'code', code, option);
+  }
+
+  enableCodeToCatalog(code: CodeModel): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.put<CodeModel>(environment.apiUrl + 'code', code, option);
+  }
 }
