@@ -19,13 +19,13 @@ export class CodeEditorService {
     return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce/' + id,  formData);
   }
 
-  testUserCode(data: any): Observable<any> {
+  testCodeQuality(data: any): Observable<any> {
     const option = {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.post<any>(environment.apiUrl + 'code/quality', data, option);
+    return this.http.post<any>(environment.apiUrl + 'quality', data, option);
   }
 
   getUserCodeHistory(): Observable<CodeModel[]> {
@@ -46,4 +46,12 @@ export class CodeEditorService {
     return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
   }
 
+  parseFile(artifact: any): Observable<string> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<string>(environment.apiUrl + 'quality/parse', artifact, option);
+  }
 }

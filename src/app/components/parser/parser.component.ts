@@ -28,6 +28,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
+  backendArtifact: string;
   spinner = false;
   exampleCode = `import sys
 
@@ -95,9 +96,15 @@ with open(argv[1]) as file:
 
         // test if user code is not a copied
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
-          this.selectedCode = code;
-          console.log(this.selectedCode);
+          // test if quality of code
+          this.codeEditorService.testCodeQuality(code).subscribe(result => {
+            this.selectedCode = result;
+            console.log(this.selectedCode);
+          });
         });
+
+        // parsing file
+        this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
         this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
@@ -119,7 +126,17 @@ with open(argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
-      // do algo
+
+      // && this.runnerOutput.artifact === this.backendArtifact
+      if (this.runnerOutput.stderr === '') {
+          // saveCode
+          // save run
+          console.log('saved');
+          if (this.selectedCode.codeMark >= 5 && !this.selectedCode.isPlagiarism) {
+            // upade code to enable for catalog
+            console.log('upaded');
+          }
+      }
       this.spinner = false;
 
     }, (error) => {
