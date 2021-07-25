@@ -122,20 +122,23 @@ with open(argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
+
       // && this.runnerOutput.artifact === this.backendArtifact
-      if (this.runnerOutput.stderr === '') {
+      if (this.runnerOutput.stderr === '' && this.selectedFile) {
+          // save run
+          console.log('saved run');
+
           // saveCode
-          this.codeEditorService.addCode(this.selectedCode).subscribe(result => {
-            this.selectedCode = result;
-            if (this.selectedCode.codeMark >= 5 && this.selectedCode.isPlagiarism === false) {
+          this.codeEditorService.addCode(this.selectedCode).subscribe((result) => {
+            console.log(result);
+            // refresh l'historique
+            this.codeEditorService.getUserCodeHistory().subscribe((history) => this.codeHistory = history);
+
+            if (result.codeMark >= 5 && result.isPlagiarism === false) {
               // enable for catalog
-              this.codeEditorService.enableCodeToCatalog(this.selectedCode).subscribe(res => {
-                this.selectedCode = res;
-              });
+              this.codeEditorService.enableCodeToCatalog(result).subscribe(res => this.selectedCode = res);
             }
           });
-          // save run
-          console.log('saved');
       }
       this.spinner = false;
     }, (error) => {
