@@ -28,6 +28,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
+  backendArtifact: string;
   spinner = false;
   exampleCode = `import sys
 
@@ -92,13 +93,15 @@ with open(argv[1]) as file:
           language: this.selectedLang,
           codeEncoded: btoa(this.editor.value),
         };
-
         // test if user code is not a copied
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
-          this.selectedCode = code;
-          console.log(this.selectedCode);
+          // test if quality of code
+          this.codeEditorService.testCodeQuality(code).subscribe(result => {
+            this.selectedCode = result;
+            // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
+            this.postToKafka(data);
+          });
         });
-        this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
         this.spinner = false;
@@ -119,9 +122,25 @@ with open(argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
-      // do algo
-      this.spinner = false;
 
+      // && this.runnerOutput.artifact === this.backendArtifact
+      if (this.runnerOutput.stderr === '' && this.selectedFile) {
+          // save run
+          console.log('saved run');
+
+          // saveCode
+          this.codeEditorService.addCode(this.selectedCode).subscribe((result) => {
+            console.log(result);
+            // refresh l'historique
+            this.codeEditorService.getUserCodeHistory().subscribe((history) => this.codeHistory = history);
+
+            if (result.codeMark >= 5 && result.isPlagiarism === false) {
+              // enable for catalog
+              this.codeEditorService.enableCodeToCatalog(result).subscribe(res => this.selectedCode = res);
+            }
+          });
+      }
+      this.spinner = false;
     }, (error) => {
       if (error.status === 500) {
         this.errorMessage = 'Timeout !';
