@@ -58,7 +58,7 @@
             <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-animated">
               <span *ngFor="let code of codeHistory">
                 <li role="menuitem"><p class="dropdown-item">
-                  <span (click)="updateCode(code)">{{code.date}}</span>
+                  <span (click)="updateCode(code)">{{code.date | date:'short':'UTC'}}</span>
                   <i class="fas fa-times ms-2" (click)="deleteHistory(code.id)"></i>
                   </p>
                 </li>

@@ -15,16 +15,13 @@
             <h6 class="border-default">Informations</h6>
               <div class="my-3">
                 <h6>Membre depuis</h6>
-                <h6 class="text-muted">{{userService.currentUser.createDate}}</h6>
+                <h6 class="text-muted">
+                  {{userService.currentUser.createDate | date:'longDate':'UTC'}}
+                </h6>
               </div>
               <div class="my-3">
                 <h6>Email</h6>
                 <h6 class="text-muted">{{userService.currentUser.email}}</h6>
-              </div>
-              <div class="my-3">
-                <h6>Dernière connexion</h6>
-<!--                <h6 class="text-muted">{{userService.currentUser.lastLoginDate}}</h6>-->
-                <h6 class="text-muted">{{userService.currentUser.createDate}}</h6>
               </div>
               <div class="my-3">
                 <h6>Changer le mot de passe</h6>

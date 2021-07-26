@@ -17,7 +17,7 @@ import {CodeHistoryModel} from '../../models/code-history.model';
 })
 export class ParserComponent implements AfterViewInit, OnInit {
   @ViewChild('editor') editor;
-  languages = ['python', 'typescript', 'C'];
+  languages = ['python', 'C'];
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'python';
   selectedTheme = 'twilight';
@@ -142,7 +142,7 @@ with open(sys.argv[1]) as file:
             // save on user history
             this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
 
-            if (result.codeMark >= 5 && result.isPlagiarism === false) {
+            if (result.codeMark > 5 && result.isPlagiarism === false) {
               // enable for catalog
               this.codeEditorService.enableCodeToCatalog(result).subscribe((res) => this.code = res);
             }

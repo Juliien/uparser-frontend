@@ -8,7 +8,7 @@
           <p class="text-center"><i class="far fa-file-alt fa-5x"></i></p>
           <p class="card-subtitle text-center">{{parser.extensionStart}} vers {{parser.extensionEnd}}</p>
           <p class="card-text">
-            <small class="text-muted">créer le : {{parser.date}}</small>
+            <small class="text-muted">{{parser.date | date:'longDate':'UTC'}}</small>
           </p>
         </div>
       </div>
