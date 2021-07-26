@@ -100,4 +100,14 @@ export class CodeEditorService {
     };
     return this.http.delete<any>(environment.apiUrl + 'history/user/' + this.userService.currentUser.id, option);
   }
+
+  addRun(run: any): Observable<RunnerOutputModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'runs', run, option);
+  }
 }
+

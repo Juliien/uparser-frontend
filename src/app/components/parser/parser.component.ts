@@ -21,7 +21,6 @@ export class ParserComponent implements AfterViewInit, OnInit {
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'python';
   selectedTheme = 'twilight';
-  code: CodeModel;
   codeHistory: CodeHistoryModel[] = [];
   runnerOutput: RunnerOutputModel;
   selectedFile: FileModel;
@@ -86,23 +85,8 @@ with open(sys.argv[1]) as file:
           to: this.extensionType,
           language: this.selectedLang
         };
-
-        const checkCode = {
-          userId: this.userService.currentUser.id,
-          extensionStart: this.selectedFile.fileExtension,
-          extensionEnd: this.extensionType,
-          language: this.selectedLang,
-          codeEncoded: btoa(this.editor.value),
-        };
-        // test if user code is not a copied
-        this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
-          // test if quality of code
-          this.codeEditorService.testCodeQuality(code).subscribe(result => {
-            this.code = result;
-            // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
-            this.postToKafka(data);
-          });
-        });
+        // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
+        this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
         this.spinner = false;
@@ -124,29 +108,43 @@ with open(sys.argv[1]) as file:
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
 
-      // && this.runnerOutput.artifact === this.backendArtifact
       if (this.runnerOutput.stderr === '' && this.selectedFile) {
-          // save run
-          console.log('saved run');
+        const checkCode = {
+          userId: this.userService.currentUser.id,
+          extensionStart: this.selectedFile.fileExtension,
+          extensionEnd: this.extensionType,
+          language: this.selectedLang,
+          codeEncoded: btoa(this.editor.value),
+        };
 
-          // save code
-          this.codeEditorService.addCode(this.code).subscribe((result) => {
+        // test if user code is not a copied
+        this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
+          // test if quality of code
+          this.codeEditorService.testCodeQuality(code).subscribe(codeQualityResult => {
+            // save code
+            this.codeEditorService.addCode(codeQualityResult).subscribe((codeResult) => {
+              // set runner_codeId
+              this.runnerOutput.codeId = codeResult.id;
+              // save run
+              this.codeEditorService.addRun(this.runnerOutput).subscribe((runModel) => this.runnerOutput = runModel);
 
-            const codeHistory = {
-              userId: result.userId,
-              codeEncoded: result.codeEncoded,
-              language: result.language,
-              date: result.date
-            };
+              const codeHistory = {
+                userId: codeResult.userId,
+                codeEncoded: codeResult.codeEncoded,
+                language: codeResult.language,
+                date: codeResult.date
+              };
+              // save on user history
+              this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
 
-            // save on user history
-            this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
-
-            if (result.codeMark > 5 && result.isPlagiarism === false) {
-              // enable for catalog
-              this.codeEditorService.enableCodeToCatalog(result).subscribe((res) => this.code = res);
-            }
+              // backend artifact == runner artifact
+              if (codeResult.codeMark > 5 && codeResult.isPlagiarism === false) {
+                // enable for catalog
+                this.codeEditorService.enableCodeToCatalog(codeResult).subscribe();
+              }
+            });
           });
+        });
       }
       this.spinner = false;
     }, (error) => {

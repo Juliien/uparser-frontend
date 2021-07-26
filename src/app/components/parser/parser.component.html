@@ -28,18 +28,19 @@
       <div class="card-header">
         <a class="title nav-link active cursor-default">Liste des fichiers</a>
       </div>
-
-      <table class="table table-dark">
-        <tbody *ngFor="let file of testFiles">
-        <tr>
-          <td>{{file.fileName}}</td>
-          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
-          <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
-          <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
-          <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-dark">
+          <tbody *ngFor="let file of testFiles">
+          <tr style="max-width: 50px">
+            <td>{{file.fileName}}</td>
+            <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
+            <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
+            <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
+            <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="card col-6 header">
         <div class="d-flex justify-content-between card-header">
@@ -110,6 +111,7 @@
         <div class="tab-pane fade show active" id="console" role="tabpanel">
           <div class="display-box mx-2">
             <p>stdout</p>
+            <p *ngIf="runnerOutput">{{runnerOutput.stats}}</p>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
           <div class="display-box mx-2">
