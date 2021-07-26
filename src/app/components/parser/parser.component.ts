@@ -8,6 +8,7 @@ import {CodeModel} from '../../models/code.model';
 import {RunnerOutputModel} from '../../models/runner-output.model';
 import {FileModel} from '../../models/file.model';
 import {FileService} from '../../services/file.service';
+import {CodeHistoryModel} from '../../models/code-history.model';
 
 @Component({
   selector: 'app-parser',
@@ -16,12 +17,12 @@ import {FileService} from '../../services/file.service';
 })
 export class ParserComponent implements AfterViewInit, OnInit {
   @ViewChild('editor') editor;
-  languages = ['python', 'typescript', 'C'];
+  languages = ['python', 'C'];
   themes = ['twilight', 'dracula', 'xcode', 'eclipse'];
   selectedLang = 'python';
   selectedTheme = 'twilight';
-  selectedCode: CodeModel;
-  codeHistory: CodeModel[];
+  code: CodeModel;
+  codeHistory: CodeHistoryModel[] = [];
   runnerOutput: RunnerOutputModel;
   selectedFile: FileModel;
   viewCurrentFile: FileModel;
@@ -32,7 +33,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   spinner = false;
   exampleCode = `import sys
 
-with open(argv[1]) as file:
+with open(sys.argv[1]) as file:
   print(file.read())
  `;
 
@@ -97,7 +98,7 @@ with open(argv[1]) as file:
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
           // test if quality of code
           this.codeEditorService.testCodeQuality(code).subscribe(result => {
-            this.selectedCode = result;
+            this.code = result;
             // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
             this.postToKafka(data);
           });
@@ -128,15 +129,22 @@ with open(argv[1]) as file:
           // save run
           console.log('saved run');
 
-          // saveCode
-          this.codeEditorService.addCode(this.selectedCode).subscribe((result) => {
-            console.log(result);
-            // refresh l'historique
-            this.codeEditorService.getUserCodeHistory().subscribe((history) => this.codeHistory = history);
+          // save code
+          this.codeEditorService.addCode(this.code).subscribe((result) => {
 
-            if (result.codeMark >= 5 && result.isPlagiarism === false) {
+            const codeHistory = {
+              userId: result.userId,
+              codeEncoded: result.codeEncoded,
+              language: result.language,
+              date: result.date
+            };
+
+            // save on user history
+            this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
+
+            if (result.codeMark > 5 && result.isPlagiarism === false) {
               // enable for catalog
-              this.codeEditorService.enableCodeToCatalog(result).subscribe(res => this.selectedCode = res);
+              this.codeEditorService.enableCodeToCatalog(result).subscribe((res) => this.code = res);
             }
           });
       }
@@ -157,9 +165,10 @@ with open(argv[1]) as file:
     }
   }
 
-  updateCode(): void {
-    if (this.selectedCode != null) {
-      this.editor.value = atob(this.selectedCode.codeEncoded);
+  updateCode(code: CodeHistoryModel): void {
+    if (code != null) {
+      this.editor.value = atob(code.codeEncoded);
+      this.selectedLang = code.language;
     }
   }
 
@@ -213,5 +222,17 @@ with open(argv[1]) as file:
 
   openCurrentFile(file: FileModel): void {
     this.viewCurrentFile = file;
+  }
+
+  deleteHistory(id: string): void {
+    this.codeEditorService.deleteCodeHistory(id).subscribe(() => {
+      this.codeEditorService.getUserCodeHistory().subscribe(history => {
+        this.codeHistory = [];
+        this.codeHistory = history;
+      });
+    });
+  }
+  deleteAllHistory(): void {
+    this.codeEditorService.deleteAllUserCodeHistory().subscribe(() => this.codeHistory = []);
   }
 }

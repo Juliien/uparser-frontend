@@ -6,6 +6,7 @@ import {KafkaModel} from '../models/kafka.model';
 import {UserService} from './user.service';
 import {CodeModel} from '../models/code.model';
 import {RunnerOutputModel} from '../models/runner-output.model';
+import {CodeHistoryModel} from '../models/code-history.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,15 +27,6 @@ export class CodeEditorService {
       })
     };
     return this.http.post<any>(environment.apiUrl + 'quality', data, option);
-  }
-
-  getUserCodeHistory(): Observable<CodeModel[]> {
-    const option = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-    return this.http.get<CodeModel[]>(environment.apiUrl + 'code/history/' + this.userService.currentUser.id , option);
   }
 
   isCodePlagiarism(code: any): Observable<CodeModel> {
@@ -71,5 +63,41 @@ export class CodeEditorService {
       })
     };
     return this.http.put<CodeModel>(environment.apiUrl + 'code', code, option);
+  }
+
+  getUserCodeHistory(): Observable<CodeHistoryModel[]> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.get<CodeHistoryModel[]>(environment.apiUrl + 'history/user/' + this.userService.currentUser.id , option);
+  }
+
+  addCodeHistory(code: any): Observable<CodeHistoryModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeHistoryModel>(environment.apiUrl + 'history', code, option);
+  }
+
+  deleteCodeHistory(id: string): Observable<any> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.delete<any>(environment.apiUrl + 'history/' + id, option);
+  }
+
+  deleteAllUserCodeHistory(): Observable<any> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.delete<any>(environment.apiUrl + 'history/user/' + this.userService.currentUser.id, option);
   }
 }
