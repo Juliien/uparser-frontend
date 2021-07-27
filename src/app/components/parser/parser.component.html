@@ -111,7 +111,12 @@
         <div class="tab-pane fade show active" id="console" role="tabpanel">
           <div class="display-box mx-2">
             <p>stdout</p>
-            <p *ngIf="runnerOutput">{{runnerOutput.stats}}</p>
+            <div *ngIf="runnerOutput">
+              {{runnerOutput.stats.duration}} -
+              {{runnerOutput.stats.code_size}} -
+              {{runnerOutput.stats.in_size}} -
+              {{runnerOutput.stats.out_size}}
+            </div>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
           <div class="display-box mx-2">
