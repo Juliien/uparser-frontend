@@ -18,6 +18,7 @@ import { CatalogueComponent } from './components/catalogue/catalogue.component';
 import { CatalogueDetailComponent } from './components/catalogue/catalogue-detail/catalogue-detail.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { DndDirective } from './directives/dnd.directive';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
     RegisterComponent,
     ProfileComponent,
     CatalogueComponent,
-    CatalogueDetailComponent
+    CatalogueDetailComponent,
+    DndDirective
   ],
   imports: [
     BrowserModule,

@@ -9,6 +9,7 @@ import {RunnerOutputModel} from '../../models/runner-output.model';
 import {FileModel} from '../../models/file.model';
 import {FileService} from '../../services/file.service';
 import {CodeHistoryModel} from '../../models/code-history.model';
+import {RunStatsModel} from '../../models/run-stats.model';
 
 @Component({
   selector: 'app-parser',
