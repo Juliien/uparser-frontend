@@ -14,9 +14,9 @@ describe("Parser", () => {
     cy.get('form.ng-dirty > .d-grid > .btn').click();
     cy.location('pathname').should('eq', '/home')
     cy.get(':nth-child(2) > .btn').click();
-    cy.get('[ng-reflect-model="python"]').select('typescript');
+    cy.get('.my-5 > .justify-content-center > :nth-child(1)').select('typescript');
     cy.get('.form-control.ng-untouched').type('json')
     cy.get('input[type="file"]').attachFile(fixtureFile);
-    cy.get('.my-5 > .btn').click()
+    cy.get('.col-6 > .d-flex > .btn').click()
   });
 });

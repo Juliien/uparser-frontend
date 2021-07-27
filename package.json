@@ -2,6 +2,7 @@
   "name": "uparser-client",
   "version": "0.0.0",
   "scripts": {
+    "cypress": "concurrently \"ng serve\" \"cypress open\"",
     "ng": "ng",
     "start": "node server.js",
     "start-local": "ng serve",
@@ -42,6 +43,9 @@
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
+    "concurrently": "^6.2.0",
+    "cypress": "^8.0.0",
+    "cypress-file-upload": "^4.0.6",
     "enhanced-resolve": "^3.3.0",
     "jasmine-core": "~3.6.0",
     "jasmine-spec-reporter": "~5.0.0",
