@@ -7,6 +7,7 @@ import {UserService} from './user.service';
 import {CodeModel} from '../models/code.model';
 import {RunnerOutputModel} from '../models/runner-output.model';
 import {CodeHistoryModel} from '../models/code-history.model';
+import {RunStatsModel} from '../models/run-stats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -102,12 +103,21 @@ export class CodeEditorService {
   }
 
   addRun(run: any): Observable<RunnerOutputModel> {
+    const runData = run;
+
+    if (run.artifact !== null) {
+      runData.artifact = btoa(run.artifact);
+    }
+    if (run.stdout !== '') {
+      runData.stdout = btoa(run.stdout);
+    }
+
     const option = {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'runs', run, option);
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'runs', runData, option);
   }
 }
 

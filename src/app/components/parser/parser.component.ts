@@ -4,12 +4,10 @@ import {CodeEditorService} from '../../services/code-editor.service';
 import {UserService} from '../../services/user.service';
 import {AuthenticationService} from '../../services/authentication.service';
 import {KafkaModel} from '../../models/kafka.model';
-import {CodeModel} from '../../models/code.model';
 import {RunnerOutputModel} from '../../models/runner-output.model';
 import {FileModel} from '../../models/file.model';
 import {FileService} from '../../services/file.service';
 import {CodeHistoryModel} from '../../models/code-history.model';
-import {RunStatsModel} from '../../models/run-stats.model';
 
 @Component({
   selector: 'app-parser',
@@ -127,7 +125,15 @@ with open(sys.argv[1]) as file:
               // set runner_codeId
               this.runnerOutput.codeId = codeResult.id;
               // save run
-              this.codeEditorService.addRun(this.runnerOutput).subscribe((runModel) => this.runnerOutput = runModel);
+              const run = {
+                codeId: codeResult.id,
+                userId: this.runnerOutput.userId,
+                artifact: this.runnerOutput.artifact,
+                stats: this.runnerOutput.stats,
+                stdout: this.runnerOutput.stdout,
+                stderr: this.runnerOutput.stderr,
+              };
+              this.codeEditorService.addRun(run).subscribe();
 
               const codeHistory = {
                 userId: codeResult.userId,
