@@ -6,6 +6,8 @@ import {KafkaModel} from '../models/kafka.model';
 import {UserService} from './user.service';
 import {CodeModel} from '../models/code.model';
 import {RunnerOutputModel} from '../models/runner-output.model';
+import {CodeHistoryModel} from '../models/code-history.model';
+import {RunStatsModel} from '../models/run-stats.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,22 +21,13 @@ export class CodeEditorService {
     return this.http.post<RunnerOutputModel>(environment.apiUrl + 'kafka/produce/' + id,  formData);
   }
 
-  testUserCode(data: any): Observable<any> {
+  testCodeQuality(data: any): Observable<any> {
     const option = {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.post<any>(environment.apiUrl + 'code/quality', data, option);
-  }
-
-  getUserCodeHistory(): Observable<CodeModel[]> {
-    const option = {
-      headers: new HttpHeaders({
-        Authorization: 'Bearer ' + localStorage.getItem('token')
-      })
-    };
-    return this.http.get<CodeModel[]>(environment.apiUrl + 'code/history/' + this.userService.currentUser.id , option);
+    return this.http.post<any>(environment.apiUrl + 'quality', data, option);
   }
 
   isCodePlagiarism(code: any): Observable<CodeModel> {
@@ -46,4 +39,85 @@ export class CodeEditorService {
     return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
   }
 
+  parseFile(artifact: any): Observable<string> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<string>(environment.apiUrl + 'quality/parse', artifact, option);
+  }
+
+  addCode(code: any): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeModel>(environment.apiUrl + 'code', code, option);
+  }
+
+  enableCodeToCatalog(code: CodeModel): Observable<CodeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.put<CodeModel>(environment.apiUrl + 'code', code, option);
+  }
+
+  getUserCodeHistory(): Observable<CodeHistoryModel[]> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.get<CodeHistoryModel[]>(environment.apiUrl + 'history/user/' + this.userService.currentUser.id , option);
+  }
+
+  addCodeHistory(code: any): Observable<CodeHistoryModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<CodeHistoryModel>(environment.apiUrl + 'history', code, option);
+  }
+
+  deleteCodeHistory(id: string): Observable<any> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.delete<any>(environment.apiUrl + 'history/' + id, option);
+  }
+
+  deleteAllUserCodeHistory(): Observable<any> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.delete<any>(environment.apiUrl + 'history/user/' + this.userService.currentUser.id, option);
+  }
+
+  addRun(run: any): Observable<RunnerOutputModel> {
+    const runData = run;
+
+    if (run.artifact !== null) {
+      runData.artifact = btoa(run.artifact);
+    }
+    if (run.stdout !== '') {
+      runData.stdout = btoa(run.stdout);
+    }
+
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.post<RunnerOutputModel>(environment.apiUrl + 'runs', runData, option);
+  }
 }
+

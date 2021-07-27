@@ -6,6 +6,7 @@ export class CodeModel {
   extensionEnd: string;
   hash: string;
   language: string;
+  codeMark: number;
   isPlagiarism: boolean;
   isEnable: boolean;
   date: Date;

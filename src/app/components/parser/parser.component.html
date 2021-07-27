@@ -28,24 +28,45 @@
       <div class="card-header">
         <a class="title nav-link active cursor-default">Liste des fichiers</a>
       </div>
-
-      <table class="table table-dark">
-        <tbody *ngFor="let file of testFiles">
-        <tr>
-          <td>{{file.fileName}}</td>
-          <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
-          <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
-          <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
-          <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-dark">
+          <tbody *ngFor="let file of testFiles">
+          <tr style="max-width: 50px">
+            <td>{{file.fileName}}</td>
+            <td><i class="far fa-eye" data-bs-toggle="modal" data-bs-target="#modal" (click)="openCurrentFile(file)"></i></td>
+            <td *ngIf="selectedFile === file" (click)="updateFile(null)"><i class="fas fa-check-square"></i></td>
+            <td *ngIf="selectedFile !== file" (click)="updateFile(file)"><i class="far fa-square"></i></td>
+            <td (click)="deleteFile(file.id)"><i class="fas fa-times"></i></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div class="card col-6 header">
         <div class="d-flex justify-content-between card-header">
-          <select class="form-select" [(ngModel)]="selectedCode" (change)="updateCode()">
-            <option *ngFor="let code of codeHistory" [ngValue]="code">{{code.date}}</option>
-          </select>
+          <div class="btn-group" dropdown [isDisabled]="codeHistory.length === 0">
+            <button id="button-animated" dropdownToggle type="button" class="btn btn-secondary dropdown-toggle"
+                    aria-controls="dropdown-animated">
+              Historique <span class="caret"></span>
+            </button>
+
+            <!-- button delete all history -->
+            <button type="button" class="btn btn-outline-danger ms-1" data-bs-toggle="modal"
+                    data-bs-target="#modalDelete" [disabled]="codeHistory.length === 0">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+
+            <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-animated">
+              <span *ngFor="let code of codeHistory">
+                <li role="menuitem"><p class="dropdown-item">
+                  <span (click)="updateCode(code)">{{code.date | date:'short':'UTC'}}</span>
+                  <i class="fas fa-times ms-2" (click)="deleteHistory(code.id)"></i>
+                  </p>
+                </li>
+              </span>
+            </ul>
+          </div>
+
           <button type="button" class="btn btn-primary" (click)='convertFile()' [disabled]="spinner">
             <i class="fas fa-play me-1"></i>Executer
           </button>
@@ -90,6 +111,12 @@
         <div class="tab-pane fade show active" id="console" role="tabpanel">
           <div class="display-box mx-2">
             <p>stdout</p>
+            <div *ngIf="runnerOutput">
+              {{runnerOutput.stats.duration}} -
+              {{runnerOutput.stats.code_size}} -
+              {{runnerOutput.stats.in_size}} -
+              {{runnerOutput.stats.out_size}}
+            </div>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
           <div class="display-box mx-2">
@@ -108,16 +135,35 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal File -->
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content" *ngIf="viewCurrentFile">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">{{viewCurrentFile.fileName}}</h5>
+        <h5 class="modal-title title" id="modalLabel">{{viewCurrentFile.fileName}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         {{viewCurrentFile.fileContent}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Delete History -->
+<div class="modal fade" id="modalDelete" tabindex="-1" aria-labelledby="modalContent" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title title" id="modalContent">Supprimer l'historique</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-center">Etes-vous sûr de vouloir supprimer votre historique ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Non</button>
+        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" (click)="deleteAllHistory()">Oui</button>
       </div>
     </div>
   </div>
