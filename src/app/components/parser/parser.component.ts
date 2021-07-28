@@ -27,7 +27,6 @@ export class ParserComponent implements AfterViewInit, OnInit {
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
-  backendArtifact: string;
   spinner = false;
   exampleCode = `import sys
 
@@ -84,7 +83,6 @@ with open(sys.argv[1]) as file:
           to: this.extensionType,
           language: this.selectedLang
         };
-        // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
         this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
@@ -106,8 +104,8 @@ with open(sys.argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
-
       if (this.runnerOutput.stderr === '' && this.selectedFile) {
+
         const checkCode = {
           userId: this.userService.currentUser.id,
           extensionStart: this.selectedFile.fileExtension,
@@ -144,11 +142,13 @@ with open(sys.argv[1]) as file:
               // save on user history
               this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
 
-              // backend artifact == runner artifact
-              if (codeResult.codeMark > 5 && codeResult.isPlagiarism === false) {
-                // enable for catalog
-                this.codeEditorService.enableCodeToCatalog(codeResult).subscribe();
-              }
+              // parse File
+              this.codeEditorService.parseFile(model).subscribe((backendArtifact) => {
+                if (codeResult.codeMark > 5 && codeResult.plagiarism === false && backendArtifact.result === this.runnerOutput.artifact) {
+                  // enable for catalog
+                  this.codeEditorService.enableCodeToCatalog(codeResult).subscribe();
+                }
+              });
             });
           });
         });

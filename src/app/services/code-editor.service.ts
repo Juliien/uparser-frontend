@@ -39,13 +39,13 @@ export class CodeEditorService {
     return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
   }
 
-  parseFile(artifact: any): Observable<string> {
+  parseFile(artifact: any): Observable<any> {
     const option = {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.post<string>(environment.apiUrl + 'quality/parse', artifact, option);
+    return this.http.post<any>(environment.apiUrl + 'quality/parse', artifact, option);
   }
 
   addCode(code: any): Observable<CodeModel> {

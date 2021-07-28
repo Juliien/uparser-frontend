@@ -7,7 +7,7 @@ export class CodeModel {
   hash: string;
   language: string;
   codeMark: number;
-  isPlagiarism: boolean;
-  isEnable: boolean;
+  plagiarism: boolean;
+  enable: boolean;
   date: Date;
 }
