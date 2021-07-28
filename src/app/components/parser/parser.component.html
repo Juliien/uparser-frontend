@@ -125,7 +125,7 @@
           </div>
         </div>
         <div class="tab-pane fade mx-2" id="stats" role="tabpanel">
-          <p class="text-center" *ngIf="!runnerOutput">Aucune statistique disponible</p>
+          <p class="text-center" *ngIf="!runnerOutput || !runnerOutput.stats">Aucune statistique disponible</p>
           <div *ngIf="runnerOutput">
             Durée: {{runnerOutput.stats.duration}} ms <br/>
             Fichier d'entrée: {{runnerOutput.stats.in_size}} Ko <br/>
@@ -134,7 +134,7 @@
           </div>
         </div>
         <div class="tab-pane fade mx-2" id="file" role="tabpanel">
-          <p class="text-center" *ngIf="!runnerOutput">Auncun aperçu disponible</p>
+          <p class="text-center" *ngIf="!runnerOutput || !runnerOutput.artifact">Auncun aperçu disponible</p>
           <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
         </div>
       </div>
