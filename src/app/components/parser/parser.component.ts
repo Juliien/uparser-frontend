@@ -29,6 +29,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
+  plagiarism: boolean;
   spinner = false;
   exampleCode = `import sys
 
@@ -74,6 +75,7 @@ with open(sys.argv[1]) as file:
   convertFile(): void {
     this.spinner = true;
     this.runnerOutput = null;
+    this.grade = null;
 
     if (this.selectedFile) {
       if (this.extensionType) {
@@ -118,6 +120,8 @@ with open(sys.argv[1]) as file:
 
         // test if user code is not a copied
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
+          // set isPlagiarism
+          this.plagiarism = code.plagiarism;
           // test if quality of code
           this.codeEditorService.testCodeQuality(code).subscribe(codeQualityResult => {
             this.codeEditorService.getGradeById(codeQualityResult.gradeId).subscribe(grade => this.grade = grade);
