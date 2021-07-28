@@ -1,10 +1,12 @@
+import {RunStatsModel} from './run-stats.model';
+
 export class RunnerOutputModel {
   id: string;
   artifact: string;
   codeId: string;
-  creationDate: string;
-  stats: string;
+  userId: string;
+  stats: RunStatsModel;
   stderr: string;
   stdout: string;
-  userEmail: string;
+  creationDate: string;
 }

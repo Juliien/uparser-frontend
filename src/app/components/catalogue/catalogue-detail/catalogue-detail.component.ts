@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {CatalogService} from '../../../services/catalog.service';
 import {CodeModel} from '../../../models/code.model';
 import {KafkaModel} from '../../../models/kafka.model';
@@ -12,6 +12,8 @@ import * as fileSaver from 'file-saver';
   styleUrls: ['./catalogue-detail.component.css']
 })
 export class CatalogueDetailComponent implements OnInit {
+  @ViewChild('fileDropRef', { static: false }) fileDropEl: ElementRef;
+  files: any[] = [];
   parser: CodeModel;
   fileName: string;
   fileContent: any;
@@ -27,12 +29,12 @@ export class CatalogueDetailComponent implements OnInit {
   }
 
   getUploadFile(e): void {
-    this.fileName = e.target.files[0].name;
+    this.fileName = e.files[0].name;
     const fileReader = new FileReader();
     fileReader.onloadend = (() => {
       this.fileContent = fileReader.result;
     });
-    fileReader.readAsText(e.target.files[0]);
+    fileReader.readAsText(e.files[0]);
   }
 
   convertFile(): void {
@@ -47,7 +49,7 @@ export class CatalogueDetailComponent implements OnInit {
         language: this.parser.language
       };
 
-      this.codeEditorService.postIntoKafkaTopic(data).subscribe(json => {
+      this.codeEditorService.postIntoKafkaTopic(data, '1').subscribe((json) => {
         this.runner = json;
         this.spinner = false;
         this.downloadFile();

@@ -68,3 +68,16 @@ ace-editor {
   color: #e0e0e0;
   cursor: pointer;
 }
+
+.dropdown-item:hover {
+  cursor: pointer !important;
+}
+
+.btn-outline-danger, .btn-outline-danger:focus, .grade, .grade:focus {
+  border-radius: 50% !important;
+  border: transparent !important;
+}
+
+.btn-outline-danger:hover, .grade {
+  border-radius: 50% !important;
+}

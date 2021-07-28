@@ -1,5 +1,5 @@
 .card {
-  max-width: 300px;
+  width: 300px;
   transition: transform 400ms;
 }
 
@@ -7,4 +7,16 @@
   cursor: pointer;
   transform: scale(1.1);
   z-index: 1;
+}
+
+.far {
+  color: #db202f !important;
+}
+
+nav {
+  max-width: 300px;
+}
+
+input.form-control:focus {
+  box-shadow: none;
 }
