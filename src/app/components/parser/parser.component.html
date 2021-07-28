@@ -86,8 +86,13 @@
             </a>
           </li>
           <li class="nav-item title" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#stats" role="tab" aria-selected="false">
+              Stats
+            </a>
+          </li>
+          <li class="nav-item title" role="presentation">
             <a class="nav-link" data-bs-toggle="tab" data-bs-target="#file" role="tab" aria-selected="false">
-              Afficher
+              Aperçu
             </a>
           </li>
         </ul>
@@ -111,12 +116,6 @@
         <div class="tab-pane fade show active" id="console" role="tabpanel">
           <div class="display-box mx-2">
             <p>stdout</p>
-            <div *ngIf="runnerOutput">
-              {{runnerOutput.stats.duration}} -
-              {{runnerOutput.stats.code_size}} -
-              {{runnerOutput.stats.in_size}} -
-              {{runnerOutput.stats.out_size}}
-            </div>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
           </div>
           <div class="display-box mx-2">
@@ -125,9 +124,17 @@
             <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
           </div>
         </div>
-
+        <div class="tab-pane fade mx-2" id="stats" role="tabpanel">
+          <p class="text-center" *ngIf="!runnerOutput">Aucune statistique disponible</p>
+          <div *ngIf="runnerOutput">
+            Durée: {{runnerOutput.stats.duration}} ms <br/>
+            Fichier d'entrée: {{runnerOutput.stats.in_size}} Ko <br/>
+            Fichier de sortie: {{runnerOutput.stats.out_size}} Ko <br/>
+            Code: {{runnerOutput.stats.code_size}} Ko <br/>
+          </div>
+        </div>
         <div class="tab-pane fade mx-2" id="file" role="tabpanel">
-          <p>contenue du fichier</p>
+          <p class="text-center" *ngIf="!runnerOutput">Auncun aperçu disponible</p>
           <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
         </div>
       </div>
