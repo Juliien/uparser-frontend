@@ -8,6 +8,7 @@ import {CodeModel} from '../models/code.model';
 import {RunnerOutputModel} from '../models/runner-output.model';
 import {CodeHistoryModel} from '../models/code-history.model';
 import {RunStatsModel} from '../models/run-stats.model';
+import {GradeModel} from '../models/garde.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,13 +40,13 @@ export class CodeEditorService {
     return this.http.post<CodeModel>(environment.apiUrl + 'quality/plagiarism', code, option);
   }
 
-  parseFile(artifact: any): Observable<string> {
+  parseFile(artifact: any): Observable<any> {
     const option = {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.post<string>(environment.apiUrl + 'quality/parse', artifact, option);
+    return this.http.post<any>(environment.apiUrl + 'quality/parse', artifact, option);
   }
 
   addCode(code: any): Observable<CodeModel> {
@@ -118,6 +119,15 @@ export class CodeEditorService {
       })
     };
     return this.http.post<RunnerOutputModel>(environment.apiUrl + 'runs', runData, option);
+  }
+
+  getGradeById(id: string): Observable<GradeModel> {
+    const option = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      })
+    };
+    return this.http.get<GradeModel>(environment.apiUrl + 'grades/' + id, option);
   }
 }
 

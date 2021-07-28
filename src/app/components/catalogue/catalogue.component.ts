@@ -8,8 +8,9 @@ import {CodeModel} from '../../models/code.model';
   styleUrls: ['./catalogue.component.css']
 })
 export class CatalogueComponent implements OnInit {
-
   catalog: CodeModel[];
+  item: string;
+
   constructor(private catalogService: CatalogService) { }
 
   ngOnInit(): void {

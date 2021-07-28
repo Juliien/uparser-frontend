@@ -12,3 +12,11 @@
 .far {
   color: #db202f !important;
 }
+
+nav {
+  max-width: 300px;
+}
+
+input.form-control:focus {
+  box-shadow: none;
+}

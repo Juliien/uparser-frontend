@@ -52,11 +52,11 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['home']).then();
     }, (error) => {
       switch (error.status) {
-        case 403:
+        case 404:
           this.errorMessage = 'E-mail ou mot de passe incorrect !';
           break;
-        case 400:
-          this.errorMessage = 'Fields can\'t be empty !';
+        case 403:
+          this.errorMessage = 'E-mail ou mot de passe incorrect !';
           break;
       }
     });

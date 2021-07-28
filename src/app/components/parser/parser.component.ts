@@ -8,6 +8,7 @@ import {RunnerOutputModel} from '../../models/runner-output.model';
 import {FileModel} from '../../models/file.model';
 import {FileService} from '../../services/file.service';
 import {CodeHistoryModel} from '../../models/code-history.model';
+import {GradeModel} from '../../models/garde.model';
 
 @Component({
   selector: 'app-parser',
@@ -22,12 +23,13 @@ export class ParserComponent implements AfterViewInit, OnInit {
   selectedTheme = 'twilight';
   codeHistory: CodeHistoryModel[] = [];
   runnerOutput: RunnerOutputModel;
+  grade: GradeModel;
   selectedFile: FileModel;
   viewCurrentFile: FileModel;
   testFiles: FileModel[];
   extensionType: string;
   errorMessage: string;
-  backendArtifact: string;
+  plagiarism: boolean;
   spinner = false;
   exampleCode = `import sys
 
@@ -73,6 +75,7 @@ with open(sys.argv[1]) as file:
   convertFile(): void {
     this.spinner = true;
     this.runnerOutput = null;
+    this.grade = null;
 
     if (this.selectedFile) {
       if (this.extensionType) {
@@ -84,7 +87,6 @@ with open(sys.argv[1]) as file:
           to: this.extensionType,
           language: this.selectedLang
         };
-        // this.codeEditorService.parseFile(data).subscribe(res => this.backendArtifact = res);
         this.postToKafka(data);
       } else {
         this.errorMessage = 'Les champs ne peuvent pas être vides';
@@ -106,8 +108,8 @@ with open(sys.argv[1]) as file:
   postToKafka(model: KafkaModel): void {
     this.codeEditorService.postIntoKafkaTopic(model, this.userService.currentUser.id).subscribe(jsonData => {
       this.runnerOutput = jsonData;
-
       if (this.runnerOutput.stderr === '' && this.selectedFile) {
+
         const checkCode = {
           userId: this.userService.currentUser.id,
           extensionStart: this.selectedFile.fileExtension,
@@ -118,8 +120,11 @@ with open(sys.argv[1]) as file:
 
         // test if user code is not a copied
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
+          // set isPlagiarism
+          this.plagiarism = code.plagiarism;
           // test if quality of code
           this.codeEditorService.testCodeQuality(code).subscribe(codeQualityResult => {
+            this.codeEditorService.getGradeById(codeQualityResult.gradeId).subscribe(grade => this.grade = grade);
             // save code
             this.codeEditorService.addCode(codeQualityResult).subscribe((codeResult) => {
               // set runner_codeId
@@ -144,11 +149,13 @@ with open(sys.argv[1]) as file:
               // save on user history
               this.codeEditorService.addCodeHistory(codeHistory).subscribe(history => this.codeHistory.push(history));
 
-              // backend artifact == runner artifact
-              if (codeResult.codeMark > 5 && codeResult.isPlagiarism === false) {
-                // enable for catalog
-                this.codeEditorService.enableCodeToCatalog(codeResult).subscribe();
-              }
+              // parse File
+              this.codeEditorService.parseFile(model).subscribe((backendArtifact) => {
+                if (codeResult.codeMark > 5 && codeResult.plagiarism === false && backendArtifact.result === this.runnerOutput.artifact) {
+                  // enable for catalog
+                  this.codeEditorService.enableCodeToCatalog(codeResult).subscribe();
+                }
+              });
             });
           });
         });

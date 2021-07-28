@@ -1,0 +1,16 @@
+[{
+  "id": "60d36459e12a0b7f657f26fb",
+  "firstName": "Le boss",
+  "lastName": "Karim",
+  "email": "karim@gmail.com",
+  "password": "$2a$10$a6J1iLDf5rjOLD4e7j7QT.NpCTctH4AzjD8zEhLp/Y3Y8KU7sMqaG",
+  "createDate": "2021-06-23T16:42:01.855+00:00",
+  "closeDate": null,
+  "lastLoginDate": "2021-06-23T16:42:01.855+00:00",
+  "roles": [
+    {
+      "id": "6098010444eb681e80418192",
+      "role": "USER"
+    }
+  ]
+}]

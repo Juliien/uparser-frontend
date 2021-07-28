@@ -51,8 +51,10 @@ export class RegisterComponent implements OnInit {
         this.authenticationService.decodedToken = this.authenticationService.decodeToken(result.token);
         this.router.navigate(['home']).then();
       });
-      }, () => {
-      this.errorMessage = 'Fields can\'t be empty!';
+      }, (error) => {
+      if (error.status === 409) {
+        this.errorMessage = 'Cet email existe déjà !';
+      }
     });
   }
 }

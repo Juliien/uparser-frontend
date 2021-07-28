@@ -86,8 +86,13 @@
             </a>
           </li>
           <li class="nav-item title" role="presentation">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#stats" role="tab" aria-selected="false">
+              Stats
+            </a>
+          </li>
+          <li class="nav-item title" role="presentation">
             <a class="nav-link" data-bs-toggle="tab" data-bs-target="#file" role="tab" aria-selected="false">
-              Afficher
+              Aperçu
             </a>
           </li>
         </ul>
@@ -96,28 +101,24 @@
         </button>
       </div>
 
-      <!-- Spinner -->
-      <div *ngIf="spinner">
-        <div class="text-center my-5">
-          <div class="spinner-border text-primary" role="status" style="">
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-        <p class="text-center mt-1" *ngIf="selectedFile"><strong>Conversion du fichier...</strong></p>
-      </div>
-
       <!-- content -->
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="console" role="tabpanel">
           <div class="display-box mx-2">
             <p>stdout</p>
-            <div *ngIf="runnerOutput">
-              {{runnerOutput.stats.duration}} -
-              {{runnerOutput.stats.code_size}} -
-              {{runnerOutput.stats.in_size}} -
-              {{runnerOutput.stats.out_size}}
-            </div>
+            <i *ngIf="plagiarism === true" class="mb-1"><strong style="color: #db202f">plagiat détecté</strong></i>
+            <br/>
             <code *ngIf="runnerOutput">{{runnerOutput.stdout}}</code>
+
+            <!-- Spinner -->
+            <div *ngIf="spinner">
+              <div class="text-center my-3">
+                <div class="spinner-border text-primary" role="status" style="">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            </div>
+
           </div>
           <div class="display-box mx-2">
             <hr class="me-2">
@@ -125,9 +126,32 @@
             <code *ngIf="runnerOutput">{{runnerOutput.stderr}}</code>
           </div>
         </div>
+        <div class="tab-pane fade mx-2" id="stats" role="tabpanel">
+          <p class="text-center" *ngIf="!runnerOutput || !runnerOutput.stats">Aucune statistique disponible</p>
+          <div *ngIf="runnerOutput">
+            <p class="title text-center">Statistiques du runner</p>
+            <p *ngIf="runnerOutput.stats.duration">Durée d'execution: {{runnerOutput.stats.duration}} ms</p>
+            <p *ngIf="runnerOutput.stats.in_size">Fichier d'entrée: {{runnerOutput.stats.in_size}} o</p>
+            <p *ngIf="runnerOutput.stats.out_size">Fichier de sortie: {{runnerOutput.stats.out_size}} o</p>
+            <p *ngIf="runnerOutput.stats.code_size">Taille du code: {{runnerOutput.stats.code_size}} o</p>
+          </div>
 
+          <div *ngIf="grade">
+            <p class="title text-center">Qualité de code</p>
+            <p *ngIf="grade.indentationGrade.toString() !== 'NaN'">Indentation: {{grade.indentationGrade}}</p>
+            <p *ngIf="grade.lineLengthGrade.toString() !== 'NaN'">Taille des lignes: {{grade.lineLengthGrade}}</p>
+            <p *ngIf="grade.namingVarGrade.toString() !== 'NaN'">Nom des variables: {{grade.namingVarGrade}}</p>
+            <p *ngIf="grade.functionLengthGrade.toString() !== 'NaN'">Taille des fonctions: {{grade.functionLengthGrade}}</p>
+            <p *ngIf="grade.functionDepthGrade.toString() !== 'NaN'">Profondeur des fonctions: {{grade.functionDepthGrade}}</p>
+            <p *ngIf="grade.importGrade.toString() !== 'NaN'">Check des imports: {{grade.importGrade}}</p>
+            <p *ngIf="grade.namingClassGrade.toString() !== 'NaN'">Nom des classes: {{grade.namingClassGrade}}</p>
+            <button type="button" class="btn btn-outline-light mb-1" data-bs-toggle="modal" data-bs-target="#modalGrade">
+              Détail<i class="far fa-eye ms-1"></i>
+            </button>
+          </div>
+        </div>
         <div class="tab-pane fade mx-2" id="file" role="tabpanel">
-          <p>contenue du fichier</p>
+          <p class="text-center" *ngIf="!runnerOutput || !runnerOutput.artifact">Auncun aperçu disponible</p>
           <code *ngIf="runnerOutput">{{runnerOutput.artifact}}</code>
         </div>
       </div>
@@ -164,6 +188,50 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Non</button>
         <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" (click)="deleteAllHistory()">Oui</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Grade Detail -->
+<div class="modal fade" id="modalGrade" tabindex="-1" aria-labelledby="modalContent" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title title">Qualité du code détail</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="grade">
+        <p>Indentation: {{grade.indentationGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.indentationErrMessages">
+          <p>{{err}}</p>
+        </div>
+
+        <p>Taille des lignes: {{grade.lineLengthGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.lineLengthErrMessages">
+          <p>{{err}}</p>
+        </div>
+
+        <p>Nom des variables: {{grade.namingVarGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.namingVarErrMessages">
+          <p>{{err}}</p>
+        </div>
+        <p>Taille des fonctions: {{grade.functionLengthGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.functionLengthErrMessages">
+          <p>{{err}}</p>
+        </div>
+        <p>Profondeur des fonctions: {{grade.functionDepthGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.functionDepthMessages">
+          <p>{{err}}</p>
+        </div>
+        <p>Check des imports: {{grade.importGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.importErrMessages">
+          <p>{{err}}</p>
+        </div>
+        <p>Nom des classes: {{grade.namingClassGrade}}</p>
+        <div class="ms-3" *ngFor="let err of grade.namingClassErrMessages">
+          <p>{{err}}</p>
+        </div>
       </div>
     </div>
   </div>

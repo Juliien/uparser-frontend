@@ -73,11 +73,11 @@ ace-editor {
   cursor: pointer !important;
 }
 
-.btn-outline-danger, .btn-outline-danger:focus {
+.btn-outline-danger, .btn-outline-danger:focus, .grade, .grade:focus {
   border-radius: 50% !important;
   border: transparent !important;
 }
 
-.btn-outline-danger:hover {
+.btn-outline-danger:hover, .grade {
   border-radius: 50% !important;
 }
