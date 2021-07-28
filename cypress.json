@@ -1,6 +1,8 @@
 {
   "baseUrl": "http://localhost:4200",
-  "username": "karim@gmail.com",
+  "username": "cypress@gmail.com",
   "password": "123456789",
+  "firstName": "test",
+  "lastname": "cypress",
   "defaultCommandTimeout": 4000
 }
