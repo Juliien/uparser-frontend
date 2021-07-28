@@ -1,8 +1,16 @@
 <div class="container">
   <h2 class="text-center title my-5">Catalogue</h2>
 
+  <nav class="navbar navbar-expand-lg">
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Recherche" [(ngModel)]="item">
+      <div class="input-group-append">
+        <span class="btn btn-danger"><i class="fas fa-search"></i></span>
+      </div>
+    </div>
+  </nav>
   <div class="card-deck d-flex justify-content-center" *ngIf="catalog">
-    <div *ngFor="let parser of catalog">
+    <div *ngFor="let parser of catalog | filter:item">
       <div class="card mx-2" [routerLink]="['/catalogue', parser.id]">
         <div class="card-body">
           <p class="text-center"><i class="far fa-file-alt fa-5x"></i></p>
@@ -12,6 +20,10 @@
           </p>
         </div>
       </div>
+    </div>
+
+    <div class="my-5" *ngIf="(catalog | filter: item).length === 0">
+      <h5>Aucune proposition pour "{{item}}".</h5>
     </div>
   </div>
 </div>

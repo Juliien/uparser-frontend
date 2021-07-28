@@ -1,6 +1,9 @@
+import {GradeModel} from './garde.model';
+
 export class CodeModel {
   id: string;
   userId: string;
+  gradeId: GradeModel;
   codeEncoded: string;
   extensionStart: string;
   extensionEnd: string;

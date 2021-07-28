@@ -8,6 +8,7 @@ import {RunnerOutputModel} from '../../models/runner-output.model';
 import {FileModel} from '../../models/file.model';
 import {FileService} from '../../services/file.service';
 import {CodeHistoryModel} from '../../models/code-history.model';
+import {GradeModel} from '../../models/garde.model';
 
 @Component({
   selector: 'app-parser',
@@ -22,6 +23,7 @@ export class ParserComponent implements AfterViewInit, OnInit {
   selectedTheme = 'twilight';
   codeHistory: CodeHistoryModel[] = [];
   runnerOutput: RunnerOutputModel;
+  grade: GradeModel;
   selectedFile: FileModel;
   viewCurrentFile: FileModel;
   testFiles: FileModel[];
@@ -118,6 +120,7 @@ with open(sys.argv[1]) as file:
         this.codeEditorService.isCodePlagiarism(checkCode).subscribe(code => {
           // test if quality of code
           this.codeEditorService.testCodeQuality(code).subscribe(codeQualityResult => {
+            this.codeEditorService.getGradeById(codeQualityResult.gradeId).subscribe(grade => this.grade = grade);
             // save code
             this.codeEditorService.addCode(codeQualityResult).subscribe((codeResult) => {
               // set runner_codeId

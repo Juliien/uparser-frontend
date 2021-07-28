@@ -19,6 +19,7 @@ import { CatalogueDetailComponent } from './components/catalogue/catalogue-detai
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { DndDirective } from './directives/dnd.directive';
+import {Ng2SearchPipeModule} from 'ng2-search-filter';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { DndDirective } from './directives/dnd.directive';
     AceEditorModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    Ng2SearchPipeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
